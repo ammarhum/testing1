@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Exam Timetable</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --bg-color: #f5f6fa;
+            --text-color: #2c3e50;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 60px auto 0; /* Space for fixed nav */
+            text-align: center;
+            padding: 0 10px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+            width: 100%;
+            margin-top: 0; /* No extra margin needed since container has it */
+        }
+
+        /* Navigation styles - Fixed at top */
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 0;
+            width: 100%;
+            padding: 10px;
+            background-color: var(--bg-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-btn {
+            padding: 10px 0;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            flex: 1;
+            max-width: 150px;
+            text-align: center;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .nav-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .nav-btn.active {
+            background-color: var(--secondary-color);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            font-size: 28px;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--secondary-color);
+            font-weight: 400;
+            margin-bottom: 0;
+            font-size: 16px;
+        }
+
+        /* Mobile Card Layout */
+        .exam-table-container {
+            padding: 0 10px;
+            width: 100%;
+        }
+
+        .subject-table {
+            margin-bottom: 20px;
+            background-color: transparent;
+            box-shadow: none;
+            width: 100%;
+        }
+
+        .subject-table caption {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: 600;
+            text-align: left;
+            position: relative;
+            border-radius: 0;
+            width: 100%;
+        }
+
+        .subject-table caption span {
+            display: inline-block;
+            padding: 0 5px;
+            border-radius: 4px;
+        }
+
+        .edit-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+
+        /* Card styles for exams */
+        .subject-table thead {
+            display: none;
+        }
+
+        .subject-table tbody {
+            display: block;
+            width: 100%;
+        }
+
+        .subject-table tr {
+            display: block;
+            padding: 15px;
+            background-color: white;
+            margin-bottom: 1px;
+            border-bottom: 1px solid #f0f0f0;
+            width: 100%;
+        }
+
+        .subject-table td {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 5px 0;
+            border: none;
+        }
+
+        .exam-name::before {
+            content: "Exam:";
+            display: block;
+            font-weight: 500;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .exam-date::before {
+            content: "Date:";
+            display: block;
+            font-weight: 500;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .days-left::before {
+            content: "Days Left:";
+            display: block;
+            font-weight: 500;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .exam-name {
+            font-weight: 500;
+            font-size: 16px;
+            padding-bottom: 10px;
+        }
+
+        .exam-date {
+            font-size: 16px;
+            padding-bottom: 10px;
+        }
+
+        .days-left {
+            text-align: left;
+            padding-bottom: 5px;
+        }
+
+        .days-left-value {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            min-width: 80px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .days-urgent {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .days-soon {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .days-upcoming {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .days-distant {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 0 10px;
+            width: 100%;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .save-btn {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .reset-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .save-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            border-radius: 8px;
+            background-color: #2ecc71;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            z-index: 1000;
+        }
+
+        .save-message.error {
+            background-color: #e74c3c;
+        }
+
+        .save-message.show {
+            opacity: 1;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0;
+            }
+            
+            .nav-buttons {
+                padding: 10px;
+                position: fixed;
+                top: 0;
+                background-color: var(--bg-color);
+                z-index: 100;
+            }
+            
+            .nav-btn {
+                font-size: 14px;
+                padding: 8px 0;
+                max-width: 140px;
+            }
+            
+            header {
+                margin-top: 55px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .subtitle {
+                font-size: 14px;
+            }
+            
+            .subject-table caption {
+                font-size: 18px;
+                padding: 12px;
+            }
+            
+            .exam-name, .exam-date {
+                font-size: 15px;
+            }
+            
+            .btn {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-btn {
+                font-size: 12px;
+                padding: 8px 0;
+                max-width: 120px;
+            }
+            
+            header {
+                margin-top: 50px;
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 22px;
+            }
+            
+            .subtitle {
+                font-size: 13px;
+            }
+            
+            .subject-table caption {
+                font-size: 16px;
+            }
+            
+            .exam-name, .exam-date {
+                font-size: 14px;
+            }
+            
+            .btn {
+                font-size: 13px;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-buttons">
+            <button class="nav-btn" id="prayer-btn">Prayer Times</button>
+            <button class="nav-btn active" id="exam-btn">Exam Timetable</button>
+        </div>
+        
+        <header>
+            <h1>Exam Timetable</h1>
+            <p class="subtitle">Click on any exam name or date to edit it</p>
+        </header>
+
+        <div class="exam-table-container" id="subjects-container">
+            <!-- Subject tables will be generated here -->
+        </div>
+
+        <div class="controls">
+            <button class="btn save-btn" id="save-btn">Save Changes</button>
+            <button class="btn reset-btn" id="reset-btn">Reset to Default</button>
+        </div>
+    </div>
+
+    <script>
+        // Navigation between views
+        document.getElementById('prayer-btn').addEventListener('click', function() {
+            window.location.href = 'index.html';
+        });
+        
+        document.getElementById('exam-btn').addEventListener('click', function() {
+            // Already on exam page
+        });
+        
+        // Default exams data with original format
+        const defaultExams = {
+            "English (AQA)": [
+                { name: "Speaking", date: "April 11th" },
+                { name: "Reading & Listening", date: "May 19th" },
+                { name: "Writing", date: "May 28th" }
+            ],
+            "English (CIE)": [
+                { name: "Reading & Writing", date: "May 8th" },
+                { name: "Listening", date: "May 22nd" }
+            ],
+            "Maths": [
+                { name: "1H", date: "May 15th" },
+                { name: "2H", date: "June 4th" }
+            ],
+            "Chemistry": [
+                { name: "P4 Theory", date: "April 30th" },
+                { name: "P6 Practical", date: "May 15th" },
+                { name: "P2 Multi-Choice", date: "June 10th" }
+            ],
+            "Physics": [
+                { name: "P4 Theory", date: "May 9th" },
+                { name: "P6 Practical", date: "May 20th" },
+                { name: "P2 Multi-Choice", date: "June 4th" }
+            ],
+            "Computer Science": [
+                { name: "P1 Theory", date: "May 12th" },
+                { name: "P2 Practical", date: "May 21st" }
+            ]
+        };
+
+        // Load exams from localStorage or use defaults
+        function loadExams() {
+            try {
+                const savedExams = localStorage.getItem('examTimetable');
+                if (savedExams) {
+                    return JSON.parse(savedExams);
+                }
+            } catch (error) {
+                console.error('Error loading saved exams:', error);
+                // If there's an error parsing the JSON, clear the localStorage
+                localStorage.removeItem('examTimetable');
+            }
+            return defaultExams;
+        }
+
+        let exams = loadExams();
+
+        // Function to render all subject tables
+        function renderSubjects() {
+            const container = document.getElementById('subjects-container');
+            container.innerHTML = '';
+            
+            Object.entries(exams).forEach(([subject, examList]) => {
+                const tableContainer = document.createElement('div');
+                tableContainer.className = 'table-container';
+                
+                const table = document.createElement('table');
+                table.className = 'subject-table';
+                
+                // Create table caption (subject name)
+                const caption = document.createElement('caption');
+                const subjectSpan = document.createElement('span');
+                subjectSpan.textContent = subject;
+                subjectSpan.setAttribute('contenteditable', 'false');
+                subjectSpan.dataset.originalSubject = subject;
+                subjectSpan.addEventListener('blur', handleSubjectRename);
+                
+                const editBtn = document.createElement('button');
+                editBtn.className = 'edit-btn';
+                editBtn.innerHTML = '<svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/></svg> Edit';
+                editBtn.addEventListener('click', () => toggleEditMode(subject));
+                
+                caption.appendChild(subjectSpan);
+                caption.appendChild(editBtn);
+                table.appendChild(caption);
+                
+                // Create table headers
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                
+                const nameHeader = document.createElement('th');
+                nameHeader.textContent = 'Exam';
+                
+                const dateHeader = document.createElement('th');
+                dateHeader.textContent = 'Date';
+                
+                const daysLeftHeader = document.createElement('th');
+                daysLeftHeader.textContent = 'Days Left';
+                
+                headerRow.appendChild(nameHeader);
+                headerRow.appendChild(dateHeader);
+                headerRow.appendChild(daysLeftHeader);
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+                
+                // Create table body
+                const tbody = document.createElement('tbody');
+                
+                examList.forEach((exam, index) => {
+                    const row = document.createElement('tr');
+                    row.dataset.index = index;
+                    row.dataset.subject = subject;
+                    row.dataset.examDate = exam.date;
+                    
+                    const nameCell = document.createElement('td');
+                    nameCell.className = 'exam-name';
+                    nameCell.textContent = exam.name;
+                    nameCell.setAttribute('contenteditable', 'false');
+                    nameCell.addEventListener('blur', () => handleExamEdit(subject, index, 'name', nameCell.textContent));
+                    
+                    const dateCell = document.createElement('td');
+                    dateCell.className = 'exam-date';
+                    dateCell.textContent = exam.date;
+                    dateCell.setAttribute('contenteditable', 'false');
+                    dateCell.addEventListener('blur', () => handleExamEdit(subject, index, 'date', dateCell.textContent));
+                    
+                    const daysLeftCell = document.createElement('td');
+                    daysLeftCell.className = 'days-left';
+                    daysLeftCell.dataset.examDate = exam.date;
+                    
+                    // Calculate days left
+                    const daysLeft = calculateDaysLeft(exam.date);
+                    
+                    // Skip rendering if daysLeft is 999 (invalid date)
+                    if (daysLeft === 999) {
+                        return;
+                    }
+                    
+                    const daysLeftSpan = document.createElement('span');
+                    daysLeftSpan.className = 'days-left-value';
+                    updateDaysLeftDisplay(daysLeftSpan, daysLeft);
+                    
+                    daysLeftCell.appendChild(daysLeftSpan);
+                    
+                    row.appendChild(nameCell);
+                    row.appendChild(dateCell);
+                    row.appendChild(daysLeftCell);
+                    tbody.appendChild(row);
+                });
+                
+                table.appendChild(tbody);
+                tableContainer.appendChild(table);
+                
+                container.appendChild(tableContainer);
+            });
+        }
+        
+        // Function to update days left display
+        function updateDaysLeftDisplay(element, daysLeft) {
+            // Clear existing classes
+            element.classList.remove('days-urgent', 'days-soon', 'days-upcoming', 'days-distant');
+            
+            // Add appropriate class based on urgency
+            if (daysLeft < 0) {
+                element.classList.add('days-urgent');
+                element.textContent = 'Past';
+            } else if (daysLeft === 0) {
+                element.classList.add('days-urgent');
+                element.textContent = 'Today';
+            } else if (daysLeft <= 7) {
+                element.classList.add('days-urgent');
+                element.textContent = daysLeft + ' days';
+            } else if (daysLeft <= 14) {
+                element.classList.add('days-soon');
+                element.textContent = daysLeft + ' days';
+            } else if (daysLeft <= 30) {
+                element.classList.add('days-upcoming');
+                element.textContent = daysLeft + ' days';
+            } else {
+                element.classList.add('days-distant');
+                element.textContent = daysLeft + ' days';
+            }
+        }
+        
+        // Function to update all days left counters
+        function updateAllDaysLeft() {
+            const daysLeftCells = document.querySelectorAll('.days-left');
+            
+            daysLeftCells.forEach(cell => {
+                const examDate = cell.dataset.examDate;
+                const daysLeft = calculateDaysLeft(examDate);
+                const daysLeftSpan = cell.querySelector('.days-left-value');
+                
+                if (daysLeftSpan) {
+                    updateDaysLeftDisplay(daysLeftSpan, daysLeft);
+                }
+            });
+        }
+        
+        // Update days left counters every minute
+        setInterval(updateAllDaysLeft, 60000);
+        
+        // Function to toggle edit mode for a subject
+        function toggleEditMode(subject) {
+            const table = document.querySelector(`.subject-table:has(caption span[data-original-subject="${subject}"])`);
+            const examCells = table.querySelectorAll('.exam-name, .exam-date');
+            
+            examCells.forEach(cell => {
+                const isEditable = cell.getAttribute('contenteditable') === 'true';
+                cell.setAttribute('contenteditable', !isEditable);
+                
+                if (!isEditable && cell.classList.contains('exam-name')) {
+                    cell.focus();
+                }
+            });
+        }
+
+        // Function to handle exam edits
+        function handleExamEdit(subject, index, field, value) {
+            exams[subject][index][field] = value.trim();
+            saveExams(exams);
+        }
+
+        // Function to handle subject rename
+        function handleSubjectRename(event) {
+            const oldSubject = event.target.dataset.originalSubject;
+            const newSubject = event.target.textContent.trim();
+            
+            if (oldSubject !== newSubject && newSubject !== '') {
+                exams[newSubject] = exams[oldSubject];
+                delete exams[oldSubject];
+                event.target.dataset.originalSubject = newSubject;
+                saveExams(exams);
+            }
+        }
+
+        // Function to add a new exam - disabled
+        function addNewExam(subject) {
+            // This function is now disabled
+            console.log('Adding new exams has been disabled');
+            showSaveMessage('Adding new exams has been disabled', true);
+        }
+
+        // Save exams to localStorage
+        function saveExams(exams) {
+            try {
+                localStorage.setItem('examTimetable', JSON.stringify(exams));
+                showSaveMessage('Changes saved successfully!');
+            } catch (error) {
+                console.error('Error saving exams:', error);
+                showSaveMessage('Error saving changes. Please try again.', true);
+            }
+        }
+
+        // Show save message
+        function showSaveMessage(message, isError = false) {
+            const saveMessage = document.createElement('div');
+            saveMessage.className = isError ? 'save-message error' : 'save-message success';
+            saveMessage.textContent = message;
+            document.body.appendChild(saveMessage);
+            
+            // Remove the message after 3 seconds
+            setTimeout(() => {
+                saveMessage.classList.add('fade-out');
+                setTimeout(() => {
+                    document.body.removeChild(saveMessage);
+                }, 500);
+            }, 3000);
+        }
+
+        // Function to calculate days left until an exam
+        function calculateDaysLeft(dateStr) {
+            // Common date formats to try parsing
+            const dateFormats = [
+                // April 11th-12th, 2025
+                /([A-Za-z]+)\s+(\d+)(?:st|nd|rd|th)(?:-\d+(?:st|nd|rd|th))?,?\s*(\d{4})?/,
+                // April 11th, 2025
+                /([A-Za-z]+)\s+(\d+)(?:st|nd|rd|th),?\s*(\d{4})?/,
+                // April 11, 2025
+                /([A-Za-z]+)\s+(\d+),?\s*(\d{4})?/,
+                // 11 April 2025
+                /(\d+)\s+([A-Za-z]+)\s+(\d{4})?/,
+                // 11/04/2025
+                /(\d+)[\/\-\.](\d+)[\/\-\.](\d{4})?/
+            ];
+            
+            // If date string is empty or TBD, return a large number
+            if (!dateStr || dateStr.toLowerCase().includes('tbd')) {
+                return 999;
+            }
+            
+            let examDate = null;
+            
+            // Try to parse the date using the different formats
+            for (const format of dateFormats) {
+                const match = dateStr.match(format);
+                if (match) {
+                    try {
+                        // Different parsing based on format
+                        if (format.toString().includes('([A-Za-z]+)\\s+(\\d+)(?:st|nd|rd|th)(?:-\\d+(?:st|nd|rd|th))?')) {
+                            // Month name first format with ordinal (April 11th)
+                            const monthName = match[1];
+                            const day = parseInt(match[2], 10);
+                            let year = match[3] ? parseInt(match[3], 10) : new Date().getFullYear();
+                            
+                            const monthIndex = new Date(`${monthName} 1, 2000`).getMonth();
+                            examDate = new Date(year, monthIndex, day);
+                        } else if (format.toString().includes('([A-Za-z]+)\\s+(\\d+),?\\s*(\\d{4})?')) {
+                            // Month name first format (April 11)
+                            const monthName = match[1];
+                            const day = parseInt(match[2], 10);
+                            let year = match[3] ? parseInt(match[3], 10) : new Date().getFullYear();
+                            
+                            const monthIndex = new Date(`${monthName} 1, 2000`).getMonth();
+                            examDate = new Date(year, monthIndex, day);
+                        } else if (format.toString().includes('(\\d+)\\s+([A-Za-z]+)\\s+(\\d{4})?')) {
+                            // Day first format (11 April)
+                            const day = parseInt(match[1], 10);
+                            const monthName = match[2];
+                            let year = match[3] ? parseInt(match[3], 10) : new Date().getFullYear();
+                            
+                            const monthIndex = new Date(`${monthName} 1, 2000`).getMonth();
+                            examDate = new Date(year, monthIndex, day);
+                        } else {
+                            // Numeric format (11/04 or 11-04)
+                            const day = parseInt(match[1], 10);
+                            const month = parseInt(match[2], 10) - 1; // JS months are 0-indexed
+                            let year = match[3] ? parseInt(match[3], 10) : new Date().getFullYear();
+                            
+                            examDate = new Date(year, month, day);
+                        }
+                        break;
+                    } catch (e) {
+                        console.error('Error parsing date:', e);
+                        continue;
+                    }
+                }
+            }
+            
+            // If we couldn't parse the date, return a large number
+            if (!examDate || isNaN(examDate.getTime())) {
+                return 999;
+            }
+            
+            // Calculate days difference
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            examDate.setHours(0, 0, 0, 0);
+            
+            const diffTime = examDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            return diffDays;
+        }
+
+        // Event listeners for buttons
+        document.getElementById('save-btn').addEventListener('click', () => {
+            saveExams(exams);
+        });
+
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            if (confirm('Are you sure you want to reset to the default exam timetable? All changes will be lost.')) {
+                exams = JSON.parse(JSON.stringify(defaultExams));
+                saveExams(exams);
+                renderSubjects();
+            }
+        });
+
+        // Initialize the page
+        renderSubjects();
+        
+        // Update days left immediately and then set up the interval
+        updateAllDaysLeft();
+    </script>
+</body>
+</html>

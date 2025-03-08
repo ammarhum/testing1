@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prayer Times Countdown</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #f39c12;
+            --text-color: #333;
+            --bg-color: #f5f5f5;
+            --border-radius: 15px;
+            --card-bg: #fff;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 1. Add subtle background pattern for visual interest */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            background-image: url('https://www.transparenttextures.com/patterns/subtle-white-feathers.png');
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .nav-btn {
+            background-color: transparent;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            border-radius: 8px;
+        }
+        
+        .nav-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+        
+        .nav-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .prayer-times-container {
+            text-align: center;
+        }
+        
+        h1, h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .masjid-container {
+            margin: 20px auto;
+            max-width: 300px;
+        }
+        
+        .masjid-svg {
+            width: 100%;
+            height: auto;
+        }
+        
+        .mosque-body {
+            fill: var(--primary-color);
+            stroke: var(--bg-color);
+            stroke-width: 2;
+        }
+        
+        .mosque-dome {
+            fill: var(--secondary-color);
+            stroke: var(--bg-color);
+            stroke-width: 2;
+        }
+        
+        .mosque-minaret {
+            fill: var(--primary-color);
+            stroke: var(--bg-color);
+            stroke-width: 1;
+        }
+        
+        .mosque-window {
+            fill: var(--accent-color);
+            stroke: var(--bg-color);
+            opacity: 0.8;
+        }
+        
+        .countdown-container {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: var(--shadow);
+        }
+        
+        .time {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 15px 0;
+        }
+        
+        .progress-container {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            height: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        /* 3. Add smooth transition to progress bar */
+        .progress-bar {
+            height: 100%;
+            background-color: var(--secondary-color);
+            width: 0%;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+        
+        .prayer-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+        
+        .all-prayer-times-container {
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: var(--shadow);
+        }
+        
+        .current-date {
+            font-size: 1rem;
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+        
+        .prayer-times-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        
+        /* 2. Improve prayer time items with highlight for next prayer */
+        .prayer-time-item {
+            background-color: rgba(0, 0, 0, 0.03);
+            border-radius: 10px;
+            padding: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .prayer-time-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .prayer-time-item.next-prayer {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .prayer-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .prayer-time {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+        
+        .hidden {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-buttons">
+            <button class="nav-btn active" id="prayer-btn">Prayer Times</button>
+            <button class="nav-btn" id="exam-btn">Exam Timetable</button>
+        </div>
+        
+        <div class="prayer-times-container" id="prayer-view">
+            <h1>Prayer Times for Cairo</h1>
+            
+            <!-- Mosque SVG -->
+            <div class="masjid-container">
+                <svg class="masjid-svg" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Main Building -->
+                    <rect class="mosque-body" x="150" y="150" width="300" height="150" rx="5"/>
+                    
+                    <!-- Main Dome -->
+                    <path class="mosque-dome" d="M300 50 C220 50 200 150 200 150 L400 150 C400 150 380 50 300 50Z"/>
+                    
+                    <!-- Dome Top -->
+                    <path class="mosque-dome" d="M300 50 L300 20 L300 20 L310 30 L300 10 L290 30 L300 20 Z"/>
+                    
+                    <!-- Left Minaret -->
+                    <rect class="mosque-minaret" x="120" y="140" width="20" height="160"/>
+                    <polygon class="mosque-minaret" points="130,120 115,140 145,140"/>
+                    <rect class="mosque-minaret" x="125" y="100" width="10" height="20"/>
+                    <polygon class="mosque-minaret" points="130,80 125,100 135,100"/>
+                    
+                    <!-- Right Minaret -->
+                    <rect class="mosque-minaret" x="460" y="140" width="20" height="160"/>
+                    <polygon class="mosque-minaret" points="470,120 455,140 485,140"/>
+                    <rect class="mosque-minaret" x="465" y="100" width="10" height="20"/>
+                    <polygon class="mosque-minaret" points="470,80 465,100 475,100"/>
+                    
+                    <!-- Small Domes -->
+                    <path class="mosque-dome" d="M225 120 C205 120 200 150 200 150 L250 150 C250 150 245 120 225 120Z"/>
+                    <path class="mosque-dome" d="M375 120 C355 120 350 150 350 150 L400 150 C400 150 395 120 375 120Z"/>
+                    
+                    <!-- Windows -->
+                    <rect class="mosque-window" x="210" y="200" width="30" height="60" rx="15"/>
+                    <rect class="mosque-window" x="285" y="200" width="30" height="60" rx="15"/>
+                    <rect class="mosque-window" x="360" y="200" width="30" height="60" rx="15"/>
+                    
+                    <!-- Door -->
+                    <rect class="mosque-window" x="285" y="240" width="30" height="60" rx="3"/>
+                    
+                    <!-- Decorative Elements -->
+                    <line x1="150" y1="170" x2="450" y2="170" stroke="var(--bg-color)" stroke-width="2" opacity="0.5"/>
+                    <line x1="150" y1="270" x2="450" y2="270" stroke="var(--bg-color)" stroke-width="2" opacity="0.5"/>
+                </svg>
+            </div>
+            
+            <!-- Countdown to Maghrib -->
+            <div class="countdown-container">
+                <h2 id="countdown-title">Time Until Maghrib</h2>
+                <div class="time" id="countdown">Loading...</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress"></div>
+                </div>
+                <div class="prayer-info">
+                    <span>Fajr: <span id="fajr-time">--:--</span></span>
+                    <span>Maghrib: <span id="maghrib-time">--:--</span></span>
+                </div>
+            </div>
+            
+            <div id="prayer-times">
+                <h2>Today's Prayer Times</h2>
+                <div class="current-date" id="current-date">Loading date...</div>
+                <div class="prayer-times-grid" id="all-prayer-times">
+                    Loading all prayer times...
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>Prayer times provided by AlAdhan API &copy; 2025</p>
+    </footer>
+
+    <script>
+        // Navigation between views
+        document.getElementById('prayer-btn').addEventListener('click', function() {
+            document.getElementById('prayer-view').style.display = 'block';
+            document.getElementById('prayer-btn').classList.add('active');
+            document.getElementById('exam-btn').classList.remove('active');
+            // Use window.location to navigate would refresh the page
+            // Instead we'll load the exam timetable in an iframe when needed
+        });
+        
+        document.getElementById('exam-btn').addEventListener('click', function() {
+            document.getElementById('prayer-btn').classList.remove('active');
+            document.getElementById('exam-btn').classList.add('active');
+            window.location.href = 'exam-timetable.html';
+        });
+        
+        // Function to get prayer times
+        async function getPrayerTimes() {
+            // Get today's date in YYYY-MM-DD format for the API
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = (today.getMonth() + 1).toString().padStart(2, '0');
+            const day = today.getDate().toString().padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+            
+            // Include the date in the API request to ensure we get today's times
+            const response = await fetch(`https://api.aladhan.com/v1/timingsByCity/${dateStr}?city=Cairo&country=Egypt&method=5`);
+            const data = await response.json();
+            return data.data.timings;
+        }
+
+        // Format time remaining
+        function formatTimeRemaining(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // 24 hour to 12 hour format converter
+        function formatTo12Hour(timeStr) {
+            const [hour, minute] = timeStr.split(':');
+            const hourNum = parseInt(hour, 10);
+            const period = hourNum >= 12 ? 'PM' : 'AM';
+            const hour12 = hourNum % 12 || 12;
+            return `${hour12}:${minute} ${period}`;
+        }
+
+        // Parse time string to Date object
+        function parseTime(timeStr) {
+            const [hour, minute] = timeStr.split(':');
+            const date = new Date();
+            date.setHours(parseInt(hour, 10), parseInt(minute, 10), 0);
+            return date;
+        }
+
+        // Update progress bar
+        function updateProgress(startTime, endTime, currentTime) {
+            const total = endTime - startTime;
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(100, Math.max(0, (elapsed / total) * 100));
+            document.getElementById('progress').style.width = `${progress}%`;
+        }
+
+        // Update countdown
+        async function updateCountdown() {
+            const times = await getPrayerTimes();
+            const fajrTime = parseTime(times.Fajr);
+            const maghribTime = parseTime(times.Maghrib);
+            
+            document.getElementById('fajr-time').textContent = formatTo12Hour(times.Fajr);
+            document.getElementById('maghrib-time').textContent = formatTo12Hour(times.Maghrib);
+
+            setInterval(() => {
+                const now = new Date();
+                
+                // Determine which prayer to count down to based on current time
+                if (now > fajrTime && now < maghribTime) {
+                    // Between Fajr and Maghrib - count down to Maghrib
+                    const timeRemaining = maghribTime - now;
+                    document.getElementById('countdown-title').textContent = "Time Until Maghrib";
+                    document.getElementById('countdown').textContent = formatTimeRemaining(timeRemaining);
+                    updateProgress(fajrTime, maghribTime, now);
+                } else {
+                    // After Maghrib or before Fajr - count down to Fajr
+                    let nextFajrTime = new Date(fajrTime);
+                    
+                    // If we're past Fajr time today, use tomorrow's Fajr
+                    if (now > fajrTime) {
+                        nextFajrTime.setDate(nextFajrTime.getDate() + 1);
+                    }
+                    
+                    const timeRemaining = nextFajrTime - now;
+                    document.getElementById('countdown-title').textContent = "Time Until Fajr";
+                    document.getElementById('countdown').textContent = formatTimeRemaining(timeRemaining);
+                    
+                    // For progress bar, if after Maghrib, we're progressing from Maghrib to next Fajr
+                    if (now > maghribTime) {
+                        updateProgress(maghribTime, nextFajrTime, now);
+                    } else {
+                        // Before Fajr, we're progressing from previous Maghrib to Fajr
+                        let prevMaghribTime = new Date(maghribTime);
+                        prevMaghribTime.setDate(prevMaghribTime.getDate() - 1);
+                        updateProgress(prevMaghribTime, fajrTime, now);
+                    }
+                }
+            }, 1000);
+        }
+        
+        // Display all prayer times
+        async function displayAllPrayerTimes() {
+            try {
+                // Display current date
+                const today = new Date();
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                document.getElementById('current-date').textContent = today.toLocaleDateString('en-US', options);
+                
+                const times = await getPrayerTimes();
+                const prayerTimesContainer = document.getElementById('all-prayer-times');
+                
+                // Create a formatted display of all prayer times
+                const prayerNames = {
+                    'Fajr': 'Fajr',
+                    'Sunrise': 'Sunrise',
+                    'Dhuhr': 'Dhuhr',
+                    'Asr': 'Asr',
+                    'Maghrib': 'Maghrib',
+                    'Isha': 'Isha'
+                };
+                
+                let html = '';
+                // Get current time to determine the next prayer
+                const now = new Date();
+                const prayerTimes = Object.entries(times).filter(([key]) => key in prayerNames);
+                let nextPrayerFound = false;
+                
+                for (const [key, time] of prayerTimes) {
+                    const prayerTime = parseTime(time);
+                    const isNextPrayer = !nextPrayerFound && prayerTime > now;
+                    
+                    if (isNextPrayer) {
+                        nextPrayerFound = true;
+                    }
+                    
+                    html += `
+                        <div class="prayer-time-item ${isNextPrayer ? 'next-prayer' : ''}">
+                            <div class="prayer-name">${prayerNames[key]}</div>
+                            <div class="prayer-time">${formatTo12Hour(time)}</div>
+                        </div>
+                    `;
+                }
+                
+                prayerTimesContainer.innerHTML = html;
+            } catch (error) {
+                console.error('Error displaying all prayer times:', error);
+                document.getElementById('all-prayer-times').innerHTML = 'Error loading prayer times. Please try again.';
+            }
+        }
+        
+        // Initialize countdown
+        updateCountdown().catch(console.error);
+        
+        // Initialize all prayer times display
+        displayAllPrayerTimes().catch(console.error);
+    </script>
+</body>
+</html>
