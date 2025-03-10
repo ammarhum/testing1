@@ -137,7 +137,7 @@
 
         .countdown-container:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
         }
 
         .time {
@@ -145,6 +145,11 @@
             font-weight: 600;
             color: var(--primary-color);
             margin: 0.8rem 0;
+            transition: color 0.3s ease;
+        }
+
+        .countdown-container:hover .time {
+            color: var(--accent-color);
         }
 
         .progress-container {
@@ -159,8 +164,13 @@
         .progress-bar {
             width: 0%;
             height: 100%;
-            background: linear-gradient(90deg, var(--accent-color), #2ecc71);
-            transition: width 1s ease;
+            background: linear-gradient(90deg, 
+                var(--accent-color), 
+                var(--primary-color), 
+                var(--accent-color));
+            background-size: 200% 100%;
+            animation: slide-gradient 3s ease infinite;
+            transition: width 0.8s ease-in-out;
         }
 
         .prayer-info {
@@ -178,6 +188,12 @@
             background-color: white;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #prayer-times:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
 
         #prayer-times h2 {
@@ -198,6 +214,7 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
+            transition: all 0.3s ease;
         }
 
         .prayer-time-item {
@@ -208,6 +225,7 @@
             border-radius: 10px;
             background-color: var(--bg-color);
             transition: all 0.3s ease;
+            padding-left: 20px; /* Add space for the indicator dot */
         }
         
         .prayer-time-item.next-prayer {
@@ -218,7 +236,11 @@
 
         .prayer-time-item:hover {
             transform: translateY(-3px);
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .prayer-time-item.current {
+            animation: gentle-pulse 2s infinite;
         }
 
         .prayer-name {
@@ -434,8 +456,8 @@
                 font-size: 24px;
             }
             
-            .subtitle {
-                font-size: 14px;
+            h2 {
+                font-size: 20px;
             }
             
             .subject-table caption {
@@ -467,8 +489,8 @@
                 font-size: 22px;
             }
             
-            .subtitle {
-                font-size: 13px;
+            h2 {
+                font-size: 18px;
             }
             
             .subject-table caption {
@@ -483,6 +505,266 @@
                 font-size: 13px;
                 padding: 8px 16px;
             }
+        }
+
+        /* ENHANCEMENT 1: Subtle Background Effects */
+        /* Background pattern with animated gradient */
+        body:before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.03;
+            background-image: 
+                linear-gradient(135deg, 
+                var(--primary-color) 25%, transparent 25%),
+                linear-gradient(225deg, var(--primary-color) 25%, transparent 25%),
+                linear-gradient(45deg, var(--primary-color) 25%, transparent 25%),
+                linear-gradient(315deg, var(--primary-color) 25%, transparent 25%);
+            background-position: 10px 0, 10px 0, 0 0, 0 0;
+            background-size: 20px 20px;
+            background-repeat: repeat;
+            animation: pattern-shift 60s linear infinite;
+        }
+        
+        @keyframes pattern-shift {
+            0% { background-position: 0 0, 10px 0, 0 0, 0 0; }
+            100% { background-position: 500px 500px, 510px 500px, 500px 500px, 500px 500px; }
+        }
+
+        /* ENHANCEMENT 2: Microinteractions */
+        /* Button click effect */
+        .nav-btn:active, .btn:active, .toggle-btn:active {
+            transform: scale(0.96);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Prayer time indicator dots */
+        .prayer-time-item:before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            margin-right: 5px;
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%) scale(0);
+            transition: transform 0.3s ease;
+            opacity: 0.7;
+        }
+        
+        .prayer-time-item:hover:before {
+            transform: translateY(-50%) scale(1);
+        }
+        
+        .prayer-time-item.current:before {
+            transform: translateY(-50%) scale(1);
+            background-color: #2ecc71;
+        }
+        
+        /* View transition effect */
+        .view {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+        }
+        
+        .view.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Active tab indicator animation */
+        @keyframes tab-indicator {
+            0% { width: 0; left: 50%; }
+            100% { width: 100%; left: 0; }
+        }
+        
+        .nav-btn.active:after {
+            animation: tab-indicator 0.3s forwards;
+        }
+        
+        /* Microinteraction for countdown time */
+        .time {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .time:after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+        
+        .countdown-container:hover .time:after {
+            width: 100%;
+            left: 0;
+        }
+        
+        /* Ripple effect for buttons */
+        .btn, .nav-btn, .toggle-btn {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:after, .nav-btn:after, .toggle-btn:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%, -50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .btn:focus:not(:active)::after, 
+        .nav-btn:focus:not(:active)::after, 
+        .toggle-btn:focus:not(:active)::after {
+            animation: ripple 0.8s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            20% {
+                transform: scale(25, 25);
+                opacity: 0.3;
+            }
+            100% {
+                opacity: 0;
+                transform: scale(40, 40);
+            }
+        }
+        
+        /* ENHANCEMENT 3: Improved Mobile View */
+        /* Base responsive improvements */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                margin: 1rem auto;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .prayer-times-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .countdown-container {
+                padding: 1.2rem;
+            }
+            
+            .time {
+                font-size: 2.4rem;
+            }
+            
+            .prayer-info {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-buttons {
+                position: sticky;
+                top: 0;
+                padding: 10px 0;
+                background-color: var(--bg-color);
+                z-index: 100;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .prayer-times-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .nav-btn {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .time {
+                font-size: 2rem;
+            }
+            
+            .container {
+                width: 98%;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            /* Improved spacing for mobile */
+            .prayer-time-item {
+                padding: 12px 10px;
+            }
+            
+            .countdown-container {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+            
+            /* Adjust exam layout for mobile */
+            .exam-timetable {
+                grid-template-columns: 1fr;
+            }
+            
+            .exam-info {
+                grid-template-columns: 1fr;
+            }
+            
+            /* Full width subject items */
+            .subject-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .subject-dates {
+                margin-top: 10px;
+                flex-wrap: wrap;
+            }
+            
+            /* Improved button touch targets */
+            .btn, .nav-btn, .toggle-btn {
+                min-height: 44px; /* Minimum touch target size */
+                line-height: 1;
+            }
+        }
+        
+        /* Fluid typography for better readability on all screens */
+        @media (max-width: 768px) {
+            body {
+                font-size: calc(14px + 0.2vw);
+            }
+            
+            h1 { font-size: calc(1.5rem + 1vw); }
+            h2 { font-size: calc(1.3rem + 0.5vw); }
+            h3 { font-size: calc(1.1rem + 0.3vw); }
         }
 
         /* Add a circular toggle button for dark mode */
@@ -573,15 +855,12 @@
         
         .prayer-time-item {
             transition: all 0.3s ease;
+            padding-left: 20px; /* Add space for the indicator dot */
         }
         
         .prayer-time-item:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .prayer-time-item.current {
-            animation: gentle-pulse 2s infinite;
         }
         
         /* Enhanced UI elements */
@@ -640,11 +919,6 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
         
-        /* Entrance animations */
-        .view {
-            animation: subtle-fade-in 0.5s ease-out;
-        }
-        
         /* Improved masjid SVG */
         .masjid-svg {
             transition: all 0.5s ease;
@@ -693,18 +967,31 @@
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
+
+        /* Floating particles for background */
+        .particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
     <button class="toggle-btn" id="toggle-dark-mode">🌙</button>
     <div class="container">
         <div class="nav-buttons">
-            <button class="nav-btn active" id="prayer-btn">Prayer Times</button>
-            <button class="nav-btn" id="exam-btn">Exam Timetable</button>
+            <button class="nav-btn active" id="prayer-btn" data-view="prayer">Prayer Times</button>
+            <button class="nav-btn" id="exam-btn" data-view="exam">Exam Timetable</button>
         </div>
         
         <!-- Prayer Times View -->
-        <div class="view active" id="prayer-view">
+        <div class="view active prayer-view" id="prayer-view">
             <h1>Prayer Times for Cairo</h1>
             
             <!-- Mosque SVG -->
@@ -772,7 +1059,7 @@
         </div>
         
         <!-- Exam Timetable View -->
-        <div class="view" id="exam-view">
+        <div class="view exam-view" id="exam-view">
             <h1>Exam Timetable</h1>
             
             <div class="exam-table-container" id="subjects-container">
@@ -868,50 +1155,54 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Set up navigation controls
             document.getElementById('prayer-btn').addEventListener('click', function() {
-                // Update active button
                 document.getElementById('prayer-btn').classList.add('active');
                 document.getElementById('exam-btn').classList.remove('active');
-                
-                // Show prayer view and hide exam view with smooth transition
-                const prayerView = document.getElementById('prayer-view');
-                const examView = document.getElementById('exam-view');
-                
-                examView.style.opacity = '0';
-                setTimeout(() => {
-                    examView.classList.remove('active');
-                    prayerView.classList.add('active');
-                    setTimeout(() => {
-                        prayerView.style.opacity = '1';
-                        document.getElementById('footer-text').textContent = 'Prayer times provided by AlAdhan API &copy; 2025';
-                    }, 50);
-                }, 300);
+                updateView();
             });
-            
+
             document.getElementById('exam-btn').addEventListener('click', function() {
-                // Update active button
                 document.getElementById('prayer-btn').classList.remove('active');
                 document.getElementById('exam-btn').classList.add('active');
-                
-                // Show exam view and hide prayer view with smooth transition
-                const prayerView = document.getElementById('prayer-view');
-                const examView = document.getElementById('exam-view');
-                
-                prayerView.style.opacity = '0';
-                setTimeout(() => {
-                    prayerView.classList.remove('active');
-                    examView.classList.add('active');
-                    setTimeout(() => {
-                        examView.style.opacity = '1';
-                        document.getElementById('footer-text').textContent = 'Exam Timetable &copy; 2025';
-                        
-                        // Force re-render exams when the exam tab is clicked
-                        console.log('Re-rendering exams on tab click');
-                        renderSubjects();
-                        updateAllDaysLeft();
-                        renderExamsInOrder();
-                    }, 50);
-                }, 300);
+                updateView();
             });
+
+            // Update view based on active button
+            function updateView() {
+                // Hide all views with animation
+                document.querySelectorAll('.view').forEach(view => {
+                    view.classList.remove('active');
+                    setTimeout(() => {
+                        view.style.display = 'none';
+                    }, 300); // Match the transition duration
+                });
+                
+                // Show selected view with animation
+                const activeBtn = document.querySelector('.nav-btn.active');
+                if (activeBtn) {
+                    const viewId = activeBtn.dataset.view;
+                    const view = document.querySelector(`.${viewId}-container`);
+                    if (view) {
+                        setTimeout(() => {
+                            view.style.display = 'block';
+                            // Trigger reflow
+                            void view.offsetWidth;
+                            view.classList.add('active');
+                            
+                            // Update footer text based on active view
+                            if (viewId === 'prayer') {
+                                document.getElementById('footer-text').textContent = 'Prayer times provided by AlAdhan API &copy; 2025';
+                            } else if (viewId === 'exam') {
+                                document.getElementById('footer-text').textContent = 'Exam Timetable &copy; 2025';
+                                // Force re-render exams when the exam tab is clicked
+                                console.log('Re-rendering exams on tab click');
+                                renderSubjects();
+                                updateAllDaysLeft();
+                                renderExamsInOrder();
+                            }
+                        }, 310);
+                    }
+                }
+            }
         });
         
         // =============== PRAYER TIMES FUNCTIONALITY ===============
@@ -1629,6 +1920,124 @@
             console.log('DOM already loaded - initializing app immediately');
             initializeApp();
         }
+    </script>
+    <!-- Particles.js Library -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Initialize particles.js
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.particlesJS) {
+                particlesJS("particles-js", {
+                    "particles": {
+                        "number": {
+                            "value": 30,
+                            "density": {
+                                "enable": true,
+                                "value_area": 800
+                            }
+                        },
+                        "color": {
+                            "value": "#3498db"
+                        },
+                        "shape": {
+                            "type": "circle",
+                            "stroke": {
+                                "width": 0,
+                                "color": "#000000"
+                            },
+                            "polygon": {
+                                "nb_sides": 5
+                            }
+                        },
+                        "opacity": {
+                            "value": 0.1,
+                            "random": true,
+                            "anim": {
+                                "enable": true,
+                                "speed": 1,
+                                "opacity_min": 0.05,
+                                "sync": false
+                            }
+                        },
+                        "size": {
+                            "value": 5,
+                            "random": true,
+                            "anim": {
+                                "enable": true,
+                                "speed": 2,
+                                "size_min": 1,
+                                "sync": false
+                            }
+                        },
+                        "line_linked": {
+                            "enable": true,
+                            "distance": 150,
+                            "color": "#3498db",
+                            "opacity": 0.1,
+                            "width": 1
+                        },
+                        "move": {
+                            "enable": true,
+                            "speed": 1,
+                            "direction": "none",
+                            "random": true,
+                            "straight": false,
+                            "out_mode": "out",
+                            "bounce": false,
+                            "attract": {
+                                "enable": false,
+                                "rotateX": 600,
+                                "rotateY": 1200
+                            }
+                        }
+                    },
+                    "interactivity": {
+                        "detect_on": "canvas",
+                        "events": {
+                            "onhover": {
+                                "enable": true,
+                                "mode": "grab"
+                            },
+                            "onclick": {
+                                "enable": true,
+                                "mode": "push"
+                            },
+                            "resize": true
+                        },
+                        "modes": {
+                            "grab": {
+                                "distance": 140,
+                                "line_linked": {
+                                    "opacity": 0.3
+                                }
+                            },
+                            "push": {
+                                "particles_nb": 3
+                            }
+                        }
+                    },
+                    "retina_detect": true
+                });
+            }
+        });
+
+        // Handle theme colors in particles
+        function updateParticlesColors() {
+            if (window.pJSDom && window.pJSDom.length > 0) {
+                const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+                window.pJSDom[0].pJS.particles.color.value = accentColor;
+                window.pJSDom[0].pJS.particles.line_linked.color = accentColor;
+                window.pJSDom[0].pJS.fn.particlesRefresh();
+            }
+        }
+
+        // Update particles when theme changes
+        document.getElementById('theme-dropdown').addEventListener('change', function() {
+            setTimeout(updateParticlesColors, 100);
+        });
+        document.getElementById('toggle-dark-mode').addEventListener('click', function() {
+            setTimeout(updateParticlesColors, 100);
+        });
     </script>
 </body>
 </html>
