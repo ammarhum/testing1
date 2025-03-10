@@ -978,6 +978,17 @@
             z-index: -2;
             pointer-events: none;
         }
+
+        /* Add CSS for the Hijri date display */
+        .hijri-date {
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 0.9em;
+            color: var(--accent-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+            background-color: rgba(var(--primary-color-rgb), 0.08);
+        }
     </style>
 </head>
 <body>
@@ -2083,58 +2094,67 @@
             }
         });
         
-        // =============== INITIALIZATION ===============
-
-        // Add loading indicator for prayer times
-        function showLoadingIndicator() {
-            document.getElementById('countdown').textContent = 'Loading...';
-        }
-
-        // Call showLoadingIndicator before fetching prayer times
-        showLoadingIndicator();
-        console.log('Initializing application...');
-
-        // Wrap initialization in an immediately invoked function to handle errors
-        (async function initializePrayerTimes() {
+        // =============== UTILITY FUNCTIONS ===============
+        
+        // Function to convert Gregorian date to Hijri date
+        function convertToHijri(gregorianDate) {
             try {
-                console.log('Initializing prayer times...');
-                await displayAllPrayerTimes();
-                await updateCountdown();
-                console.log('Prayer times initialized successfully');
+                // Ensure we have a valid date
+                if (!(gregorianDate instanceof Date) || isNaN(gregorianDate)) {
+                    return null;
+                }
+                
+                // Julian day calculation
+                const year = gregorianDate.getFullYear();
+                const month = gregorianDate.getMonth() + 1; // JavaScript months are 0-based
+                const day = gregorianDate.getDate();
+                
+                let jd = Math.floor((365.25 * (year + 4716))) + Math.floor((30.6001 * (month + 1))) + day - 1524.5;
+                
+                // Adjustment for Julian to Gregorian calendar switch
+                if (jd > 2299160) {
+                    const a = Math.floor(year / 100);
+                    jd += 2 - a + Math.floor(a / 4);
+                }
+                
+                // Calculate Hijri date
+                jd = Math.floor(jd) + 0.5;
+                const hijriYear = Math.floor(((30 * (jd - 1948439.5)) + 10646) / 10631);
+                const hijriMonth = Math.min(12, Math.ceil((jd - (29 + Math.floor(10631 * hijriYear / 30) + 1948439.5)) / 29.5));
+                const hijriDay = Math.floor(jd - Math.floor(29.5 * (hijriMonth - 1) + (hijriYear * 354 + Math.floor((3 + 11 * hijriYear) / 30) + 1948439.5)) + 1);
+                
+                // Arabic month names
+                const hijriMonthNames = [
+                    "Muharram", "Safar", "Rabi al-Awwal", "Rabi al-Thani", 
+                    "Jumada al-Awwal", "Jumada al-Thani", "Rajab", "Sha'ban", 
+                    "Ramadan", "Shawwal", "Dhu al-Qi'dah", "Dhu al-Hijjah"
+                ];
+                
+                return {
+                    day: hijriDay,
+                    month: hijriMonth,
+                    monthName: hijriMonthNames[hijriMonth - 1],
+                    year: hijriYear
+                };
             } catch (error) {
-                console.error('Error initializing prayer times:', error);
-                document.getElementById('countdown').textContent = 'Error loading prayer times';
-                document.getElementById('all-prayer-times').innerHTML = 'Error loading prayer times. Please try again.';
+                console.error('Error converting to Hijri date:', error);
+                return null;
             }
-        })();
-
-        // Initialize exam timetable
-        console.log('Initializing exam timetable...');
-        renderSubjects();
-        updateAllDaysLeft();
-
-        // Fix for the exam timetable rendering
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM fully loaded');
-            const prayerView = document.getElementById('prayer-view');
-            prayerView.style.opacity = '1';
-
-            // Ensure exam timetable is properly initialized
-            renderSubjects();
-
-            // Update exam timetable data every minute
-            setInterval(updateAllDaysLeft, 60000);
-        });
+        }
 
         // Main initialization function
         function initializeApp() {
             console.log('Initializing application...');
 
-            showLoadingIndicator();
+            // Add loading indicator for prayer times
+            function showLoadingIndicator() {
+                document.getElementById('countdown').textContent = 'Loading...';
+            }
 
+            showLoadingIndicator();
+            console.log('Initializing prayer times...');
             (async function initializePrayerTimes() {
                 try {
-                    console.log('Initializing prayer times...');
                     await displayAllPrayerTimes();
                     await updateCountdown();
                     console.log('Prayer times initialized successfully');
@@ -2149,8 +2169,29 @@
             try {
                 renderSubjects();
                 updateAllDaysLeft();
-                renderExamsInOrder();
-                console.log('Exam timetable initialized successfully');
+
+                // Fix for the exam timetable rendering
+                document.addEventListener('DOMContentLoaded', function() {
+                    console.log('DOM fully loaded');
+                    const prayerView = document.getElementById('prayer-view');
+                    prayerView.style.opacity = '1';
+
+                    // Ensure exam timetable is properly initialized
+                    renderSubjects();
+
+                    // Update exam timetable data every minute
+                    setInterval(updateAllDaysLeft, 60000);
+                });
+
+                // Add Hijri date display
+                const dateElement = document.getElementById('current-date');
+                if (dateElement) {
+                    const today = new Date();
+                    const hijriDate = convertToHijri(today);
+                    if (hijriDate) {
+                        dateElement.innerHTML = `${today.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} <span class="hijri-date">${hijriDate.day} ${hijriDate.monthName} ${hijriDate.year} AH</span>`;
+                    }
+                }
             } catch (error) {
                 console.error('Error initializing exam timetable:', error);
             }
