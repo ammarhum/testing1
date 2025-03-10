@@ -2,7 +2,7 @@
   "name": "Prayer Times Countdown",
   "short_name": "Prayer Times",
   "description": "Track prayer times and exam timetable for Cairo",
-  "start_url": "/",
+  "start_url": "/testing/",
   "display": "standalone",
   "background_color": "#f5f6fa",
   "theme_color": "#2c3e50",
