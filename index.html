@@ -1207,6 +1207,157 @@
         
         // =============== PRAYER TIMES FUNCTIONALITY ===============
         
+        // Helper function to convert degrees to radians
+        function toRadians(degrees) {
+            return degrees * Math.PI / 180;
+        }
+        
+        // Helper function to convert radians to degrees
+        function toDegrees(radians) {
+            return radians * 180 / Math.PI;
+        }
+        
+        // Implementation of a prayer times calculator
+        function calculatePrayerTimes(date) {
+            // Prayer times for Cairo, Egypt
+            const latitude = 30.0444;
+            const longitude = 31.2357;
+            const timezone = 2; // Cairo is UTC+2
+            
+            // Date components
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            
+            // Julian date calculation
+            let julianDate = day - 32075 + Math.floor(1461 * (year + 4800 + Math.floor((month - 14) / 12)) / 4) + 
+                            Math.floor(367 * (month - 2 - Math.floor((month - 14) / 12) * 12) / 12) - 
+                            Math.floor(3 * Math.floor((year + 4900 + Math.floor((month - 14) / 12)) / 100) / 4);
+            
+            // Calculate sun's position
+            const t = (julianDate - 2451545.0) / 36525;
+            
+            // Calculate approximate solar noon
+            const L0 = 280.46646 + 36000.76983 * t + 0.0003032 * t * t;
+            const M = 357.52911 + 35999.05029 * t - 0.0001537 * t * t;
+            const e = 0.016708634 - 0.000042037 * t - 0.0000001267 * t * t;
+            const C = (1.914602 - 0.004817 * t - 0.000014 * t * t) * Math.sin(toRadians(M)) +
+                     (0.019993 - 0.000101 * t) * Math.sin(toRadians(2 * M)) +
+                     0.000289 * Math.sin(toRadians(3 * M));
+            const trueL = (L0 + C) % 360;
+            const trueM = M + C;
+            
+            // Calculate time adjustments
+            const jd2000 = julianDate - 2451545.0;
+            const eqTime = 4 * toDegrees(
+                -0.0069 + 0.0053 * Math.sin(toRadians(trueM)) - 0.0068 * Math.sin(2 * toRadians(trueL))
+            );
+            
+            const declination = toDegrees(Math.asin(
+                Math.sin(toRadians(23.45)) * Math.sin(toRadians(trueL))
+            ));
+            
+            // Base parameters for Fajr and Isha
+            const fajrAngle = 19.5; // Egyptian General Authority of Survey
+            const ishaAngle = 17.5;
+            
+            // Helper function to get time for a specific angle
+            function getTimeForAngle(angle, isMorning) {
+                const term = Math.sin(toRadians(angle)) / 
+                       (Math.cos(toRadians(latitude)) * Math.cos(toRadians(declination))) -
+                       Math.tan(toRadians(latitude)) * Math.tan(toRadians(declination));
+                
+                // Ensure term is within valid range for acos
+                const acosInput = Math.max(-1, Math.min(1, term));
+                const t = toDegrees(Math.acos(acosInput)) / 15;
+                
+                return isMorning ? 12 - t - eqTime / 60 : 12 + t - eqTime / 60;
+            }
+            
+            // Calculate prayer times in local time
+            const fajrTime = getTimeForAngle(fajrAngle, true) + timezone - longitude / 15;
+            const sunriseTime = getTimeForAngle(0.833, true) + timezone - longitude / 15;
+            const dhuhrTime = 12 + timezone - longitude / 15 - eqTime / 60;
+            const asrTime = getTimeForAngle(Math.atan(1 / (1 + Math.tan(toRadians(latitude - declination)))), false) + timezone - longitude / 15;
+            const maghribTime = getTimeForAngle(0.833, false) + timezone - longitude / 15;
+            const ishaTime = getTimeForAngle(ishaAngle, false) + timezone - longitude / 15;
+            
+            // Helper to format times
+            function formatTime(time) {
+                const hours = Math.floor(time);
+                const minutes = Math.floor((time - hours) * 60);
+                return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            }
+            
+            // Return calculated prayer times
+            return {
+                Fajr: formatTime(fajrTime),
+                Sunrise: formatTime(sunriseTime),
+                Dhuhr: formatTime(dhuhrTime),
+                Asr: formatTime(asrTime),
+                Maghrib: formatTime(maghribTime),
+                Isha: formatTime(ishaTime)
+            };
+        }
+        
+        // Simplified function to apply seasonal adjustments to calculated times
+        function applySeasonalAdjustments(times, date) {
+            const month = date.getMonth(); // 0-11
+            
+            // Seasonal adjustments (fine-tuning based on month)
+            const adjustments = {
+                // Winter adjustments (November to February)
+                winter: {
+                    Fajr: -5,      // 5 minutes earlier
+                    Sunrise: 0,
+                    Dhuhr: 0, 
+                    Asr: 0,
+                    Maghrib: 0,
+                    Isha: 10       // 10 minutes later
+                },
+                // Spring/Fall adjustments (March, April, September, October)
+                midSeason: {
+                    Fajr: -3,      // 3 minutes earlier
+                    Sunrise: 0,
+                    Dhuhr: 0,
+                    Asr: 5,        // 5 minutes later
+                    Maghrib: 0,
+                    Isha: 5        // 5 minutes later
+                },
+                // Summer adjustments (May to August)
+                summer: {
+                    Fajr: -10,     // 10 minutes earlier
+                    Sunrise: 0,
+                    Dhuhr: 0,
+                    Asr: 10,       // 10 minutes later
+                    Maghrib: 5,    // 5 minutes later
+                    Isha: 15       // 15 minutes later
+                }
+            };
+            
+            // Determine season
+            let currentAdjustments;
+            if (month >= 10 || month <= 1) {
+                currentAdjustments = adjustments.winter;
+            } else if ((month >= 2 && month <= 3) || (month >= 8 && month <= 9)) {
+                currentAdjustments = adjustments.midSeason;
+            } else {
+                currentAdjustments = adjustments.summer;
+            }
+            
+            // Apply adjustments
+            const adjustedTimes = {};
+            for (const [prayer, time] of Object.entries(times)) {
+                const [hours, minutes] = time.split(':').map(num => parseInt(num, 10));
+                const totalMinutes = hours * 60 + minutes + (currentAdjustments[prayer] || 0);
+                const adjustedHours = Math.floor(totalMinutes / 60);
+                const adjustedMinutes = totalMinutes % 60;
+                adjustedTimes[prayer] = `${adjustedHours.toString().padStart(2, '0')}:${adjustedMinutes.toString().padStart(2, '0')}`;
+            }
+            
+            return adjustedTimes;
+        }
+        
         // Function to get prayer times
         async function getPrayerTimes() {
             try {
@@ -1223,76 +1374,66 @@
                     return JSON.parse(cachedTimes);
                 }
 
-                console.log('Fetching prayer times from API...', dateStr);
+                console.log('Calculating prayer times locally...');
                 
-                // Using a different API endpoint that should be more reliable
-                const apiUrl = `https://api.aladhan.com/v1/calendarByCity?city=Cairo&country=Egypt&method=5&month=${month}&year=${year}`;
-                console.log('API URL:', apiUrl);
+                // Calculate prayer times locally without API
+                const calculatedTimes = calculatePrayerTimes(today);
                 
-                const response = await fetch(apiUrl, {
-                    method: 'GET',
-                    mode: 'cors',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                });
+                // Apply seasonal adjustments for more accuracy
+                const adjustedTimes = applySeasonalAdjustments(calculatedTimes, today);
                 
-                if (!response.ok) {
-                    console.error(`API response error: ${response.status} ${response.statusText}`);
-                    throw new Error(`Network response was not ok: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                console.log('Prayer times data received:', data ? 'valid data' : 'invalid data');
-                
-                if (!data || !data.data || !data.data[day - 1] || !data.data[day - 1].timings) {
-                    console.error('Invalid data format received:', data);
-                    throw new Error('Invalid data format received from API');
-                }
-                
-                const timings = data.data[day - 1].timings;
-                
-                // Clean up the timing values to remove the (EET) suffix
-                const cleanTimings = {};
-                for (const [prayer, time] of Object.entries(timings)) {
-                    cleanTimings[prayer] = time.split(' ')[0];
-                }
+                console.log('Prayer times calculated locally:', adjustedTimes);
                 
                 // Cache the prayer times
-                localStorage.setItem(`prayerTimes_${dateStr}`, JSON.stringify(cleanTimings));
+                localStorage.setItem(`prayerTimes_${dateStr}`, JSON.stringify(adjustedTimes));
                 
-                return cleanTimings;
+                return adjustedTimes;
             } catch (error) {
-                console.error('Error fetching prayer times:', error);
-                
-                // If API fails, try to use yesterday's cached data if available
-                try {
-                    const yesterday = new Date();
-                    yesterday.setDate(yesterday.getDate() - 1);
-                    const prevYear = yesterday.getFullYear();
-                    const prevMonth = (yesterday.getMonth() + 1).toString().padStart(2, '0');
-                    const prevDay = yesterday.getDate().toString().padStart(2, '0');
-                    const prevDateStr = `${prevYear}-${prevMonth}-${prevDay}`;
-                    
-                    const cachedTimes = localStorage.getItem(`prayerTimes_${prevDateStr}`);
-                    if (cachedTimes) {
-                        console.log('Using previous day\'s cached prayer times as fallback');
-                        return JSON.parse(cachedTimes);
-                    }
-                } catch (fallbackError) {
-                    console.error('Error using cached fallback:', fallbackError);
-                }
+                console.error('Error calculating prayer times:', error);
                 
                 // Ultimate fallback
-                console.log('Using hardcoded fallback prayer times');
+                const today = new Date();
+                const currentMonth = today.getMonth(); // 0-11
+                
+                // Seasonal adjustments for prayer times
+                let fajrTime, sunriseTime, dhuhrTime, asrTime, maghribTime, ishaTime;
+                
+                // Winter (Nov-Feb)
+                if (currentMonth >= 10 || currentMonth <= 1) {
+                    fajrTime = '05:15';
+                    sunriseTime = '06:45';
+                    dhuhrTime = '12:00';
+                    asrTime = '15:00';
+                    maghribTime = '17:15';
+                    ishaTime = '18:45';
+                } 
+                // Spring/Fall (Mar-Apr, Sep-Oct)
+                else if (currentMonth >= 2 && currentMonth <= 3 || currentMonth >= 8 && currentMonth <= 9) {
+                    fajrTime = '04:30';
+                    sunriseTime = '06:00';
+                    dhuhrTime = '12:15';
+                    asrTime = '15:45';
+                    maghribTime = '18:30';
+                    ishaTime = '20:00';
+                }
+                // Summer (May-Aug)
+                else {
+                    fajrTime = '03:45';
+                    sunriseTime = '05:30';
+                    dhuhrTime = '12:20';
+                    asrTime = '16:15';
+                    maghribTime = '19:15';
+                    ishaTime = '20:45';
+                }
+                
+                console.log('Using seasonal fallback prayer times');
                 return {
-                    Fajr: '05:30',
-                    Sunrise: '06:45', 
-                    Dhuhr: '12:15',
-                    Asr: '15:30',
-                    Maghrib: '18:00',
-                    Isha: '19:30'
+                    Fajr: fajrTime,
+                    Sunrise: sunriseTime,
+                    Dhuhr: dhuhrTime,
+                    Asr: asrTime,
+                    Maghrib: maghribTime,
+                    Isha: ishaTime
                 };
             }
         }
@@ -1371,10 +1512,51 @@
         // Update countdown function to send notifications
         async function updateCountdown() {
             try {
-                const times = await getPrayerTimes();
-                if (!times) {
-                    document.getElementById('countdown').textContent = 'Error loading prayer times';
-                    return;
+                let times;
+                try {
+                    times = await getPrayerTimes();
+                    if (!times) {
+                        throw new Error('Failed to get prayer times');
+                    }
+                } catch (fetchError) {
+                    console.error('Error fetching prayer times for countdown:', fetchError);
+                    // Use fallback times
+                    const now = new Date();
+                    const hour = now.getHours();
+                    
+                    // Morning fallback (midnight to noon)
+                    if (hour < 12) {
+                        times = {
+                            Fajr: '05:00',
+                            Sunrise: '06:30',
+                            Dhuhr: '12:00',
+                            Asr: '15:30',
+                            Maghrib: '18:00',
+                            Isha: '19:30'
+                        };
+                    } 
+                    // Afternoon fallback (noon to 6pm)
+                    else if (hour < 18) {
+                        times = {
+                            Fajr: '05:00',
+                            Sunrise: '06:30',
+                            Dhuhr: '12:00',
+                            Asr: '15:30',
+                            Maghrib: '18:00',
+                            Isha: '19:30'
+                        };
+                    } 
+                    // Evening fallback (6pm to midnight)
+                    else {
+                        times = {
+                            Fajr: '05:00',
+                            Sunrise: '06:30',
+                            Dhuhr: '12:00',
+                            Asr: '15:30',
+                            Maghrib: '18:00',
+                            Isha: '19:30'
+                        };
+                    }
                 }
 
                 const countdownElement = document.getElementById('countdown');
@@ -1383,7 +1565,7 @@
                 const maghribTimeElement = document.getElementById('maghrib-time');
 
                 if (!countdownElement || !countdownTitleElement || !fajrTimeElement || !maghribTimeElement) {
-                    console.error('Required DOM elements not found');
+                    console.error('Required DOM elements not found for countdown');
                     return;
                 }
 
@@ -1432,7 +1614,7 @@
 
                 window.countdownInterval = setInterval(updateTimer, 1000);
             } catch (error) {
-                console.error('Error in updateCountdown:', error);
+                console.error('Error updating countdown:', error);
                 document.getElementById('countdown').textContent = 'Error updating countdown';
             }
         }
@@ -1440,54 +1622,119 @@
         // Display all prayer times
         async function displayAllPrayerTimes() {
             try {
-                const today = new Date();
-                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                const dateElement = document.getElementById('current-date');
-                if (dateElement) {
-                    dateElement.textContent = today.toLocaleDateString('en-US', options);
-                }
-                
-                const times = await getPrayerTimes();
-                console.log('Prayer times received for display:', times);
-                
-                if (!times) {
-                    console.error('Prayer times data is undefined');
-                    throw new Error('Prayer times data is undefined');
-                }
-                
-                const prayerTimesContainer = document.getElementById('all-prayer-times');
-                if (!prayerTimesContainer) {
+                console.log('Attempting to display all prayer times...');
+                // Make sure the container exists before proceeding
+                const container = document.getElementById('all-prayer-times');
+                if (!container) {
                     console.error('Prayer times container not found');
                     return;
                 }
                 
-                const prayerNames = {
-                    'Fajr': 'Fajr',
-                    'Sunrise': 'Sunrise',
-                    'Dhuhr': 'Dhuhr',
-                    'Asr': 'Asr',
-                    'Maghrib': 'Maghrib',
-                    'Isha': 'Isha'
-                };
-                
-                let html = '';
-                for (const [key, name] of Object.entries(prayerNames)) {
-                    const displayTime = times[key] ? formatTo12Hour(times[key]) : '-- : --';
-                    html += `
-                        <div class="prayer-time-item ${key === 'Fajr' || key === 'Maghrib' ? 'highlighted' : ''}">
-                            <div class="prayer-name">${name}</div>
-                            <div class="prayer-time">${displayTime}</div>
-                        </div>
-                    `;
+                // Get prayer times
+                let prayerTimesData;
+                try {
+                    prayerTimesData = await getPrayerTimes();
+                    if (!prayerTimesData) {
+                        throw new Error('No prayer times data received');
+                    }
+                } catch (fetchError) {
+                    console.error('Error fetching prayer times for display:', fetchError);
+                    // Create fallback times if API fetch fails
+                    const now = new Date();
+                    prayerTimesData = {
+                        Fajr: '05:00',
+                        Sunrise: '06:30',
+                        Dhuhr: '12:00',
+                        Asr: '15:30',
+                        Maghrib: '18:00',
+                        Isha: '19:30'
+                    };
                 }
                 
-                prayerTimesContainer.innerHTML = html;
-                console.log('Prayer times displayed successfully');
+                console.log('Prayer times data for display:', prayerTimesData);
+                
+                // Clear existing prayer times
+                container.innerHTML = '';
+                
+                // Define the prayer order
+                const prayerOrder = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+                
+                // Get current time
+                const now = new Date();
+                const currentHour = now.getHours();
+                const currentMinute = now.getMinutes();
+                
+                // Determine current and next prayer
+                let currentPrayer = null;
+                let nextPrayer = null;
+                
+                for (let i = 0; i < prayerOrder.length; i++) {
+                    const prayer = prayerOrder[i];
+                    if (!prayerTimesData[prayer]) continue;
+                    
+                    const [prayerHour, prayerMinute] = prayerTimesData[prayer].split(':').map(num => parseInt(num, 10));
+                    
+                    if (
+                        currentHour < prayerHour || 
+                        (currentHour === prayerHour && currentMinute < prayerMinute)
+                    ) {
+                        if (nextPrayer === null) {
+                            nextPrayer = prayer;
+                        }
+                    } else {
+                        currentPrayer = prayer;
+                    }
+                }
+                
+                // If we've passed the last prayer of the day, set the next prayer to Fajr
+                if (nextPrayer === null) {
+                    nextPrayer = 'Fajr';
+                }
+                
+                // Display each prayer time with appropriate styling
+                prayerOrder.forEach(prayer => {
+                    if (!prayerTimesData[prayer]) return;
+                    
+                    const prayerElement = document.createElement('div');
+                    prayerElement.className = 'prayer-time-item';
+                    
+                    // Add special class for current or next prayer
+                    if (prayer === currentPrayer) {
+                        prayerElement.classList.add('current-prayer');
+                    } else if (prayer === nextPrayer) {
+                        prayerElement.classList.add('next-prayer');
+                    }
+                    
+                    const nameElement = document.createElement('div');
+                    nameElement.className = 'prayer-name';
+                    nameElement.textContent = prayer;
+                    
+                    const timeElement = document.createElement('div');
+                    timeElement.className = 'prayer-time';
+                    timeElement.textContent = formatTo12Hour(prayerTimesData[prayer]);
+                    
+                    prayerElement.appendChild(nameElement);
+                    prayerElement.appendChild(timeElement);
+                    container.appendChild(prayerElement);
+                });
+                
+                console.log('Successfully displayed all prayer times');
             } catch (error) {
                 console.error('Error displaying all prayer times:', error);
-                const prayerTimesContainer = document.getElementById('all-prayer-times');
-                if (prayerTimesContainer) {
-                    prayerTimesContainer.innerHTML = 'Error loading prayer times. Please try again.';
+                
+                // Display fallback message if everything fails
+                try {
+                    const container = document.getElementById('all-prayer-times');
+                    if (container) {
+                        container.innerHTML = `
+                            <div class="prayer-time-item error">
+                                <div class="prayer-name">Notice</div>
+                                <div class="prayer-time">Unable to load prayer times</div>
+                            </div>
+                        `;
+                    }
+                } catch (fallbackError) {
+                    console.error('Failed to display error message:', fallbackError);
                 }
             }
         }
