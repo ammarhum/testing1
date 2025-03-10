@@ -1,9 +1,9 @@
 // Service Worker for Prayer Times PWA
 const CACHE_NAME = 'prayer-times-v1';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
+  '/testing/',
+  '/testing/index.html',
+  '/testing/manifest.json',
   'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap',
   'https://www.transparenttextures.com/patterns/subtle-white-feathers.png',
   '/icons/icon-72x72.png',
