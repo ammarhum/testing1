@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Prayer Times Countdown</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Add meta tags for SEO -->
+    <meta name="description" content="Prayer Times and Exam Timetable for Cairo">
+    <meta name="keywords" content="Prayer Times, Exam Timetable, Cairo">
+    <meta name="author" content="ammar">
+    
+    <!-- PWA related meta tags -->
+    <meta name="theme-color" content="#2c3e50">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icons/icon-192x192.png">
+    
+    <!-- iOS PWA meta tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Prayer Times">
+    
+    <!-- iOS icons -->
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="icons/icon-152x152.png">
+    
+    <!-- iOS splash screens -->
+    <link rel="apple-touch-startup-image" href="icons/splash-640x1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="icons/splash-750x1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)">
+    <link rel="apple-touch-startup-image" href="icons/splash-1242x2208.png" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="icons/splash-1125x2436.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)">
+    <link rel="apple-touch-startup-image" href="icons/splash-1242x2688.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3)">
+
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --bg-color: #f5f6fa;
+            --text-color: #2c3e50;
+        }
+
+        /* Dark mode variables */
+        .dark-mode {
+            --primary-color: #34495e;
+            --secondary-color: #7f8c8d;
+            --accent-color: #e67e22;
+            --bg-color: #2c3e50;
+            --text-color: #2c3e50;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: url('https://www.transparenttextures.com/patterns/subtle-white-feathers.png');
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            margin: 2rem auto;
+            text-align: center;
+        }
+
+        /* Navigation styles */
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            width: 100%;
+            position: sticky;
+            top: 0;
+            padding: 10px 0;
+            background-color: var(--bg-color);
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background-color: #1e2b3c;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.active {
+            background-color: #1e2b3c;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* PRAYER TIMES STYLES */
+
+        /* Prayer-specific styles */
+        .masjid-container {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .masjid-svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .mosque-body {
+            fill: #2c3e50;
+        }
+        
+        .mosque-dome {
+            fill: #2c3e50;
+        }
+        
+        .mosque-minaret {
+            fill: #2c3e50;
+        }
+        
+        .mosque-window {
+            fill: #f5f6fa;
+            opacity: 0.7;
+        }
+
+        .countdown-container {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .countdown-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .time {
+            font-size: 2.8rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0.8rem 0;
+        }
+
+        .progress-container {
+            width: 100%;
+            background: #eee;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-color), #2ecc71);
+            transition: width 1s ease;
+        }
+
+        .prayer-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Prayer times grid */
+        #prayer-times {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #prayer-times h2 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .current-date {
+            text-align: center;
+            color: var(--accent-color);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .prayer-times-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .prayer-time-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: var(--bg-color);
+            transition: all 0.3s ease;
+        }
+        
+        .prayer-time-item.next-prayer {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid var(--accent-color);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .prayer-time-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .prayer-name {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .prayer-time {
+            font-size: 1.1rem;
+            color: var(--accent-color);
+        }
+
+        /* EXAM TIMETABLE STYLES */
+
+        /* Mobile Card Layout */
+        .exam-table-container {
+            padding: 0 10px;
+            width: 100%;
+        }
+
+        /* Update exam timetable styles for better organization and appearance */
+        .subject-table {
+            margin-bottom: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .subject-table caption {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .subject-table th, .subject-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .subject-table th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+        }
+
+        .subject-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .subject-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .exam-name {
+            font-weight: 500;
+            font-size: 16px;
+            color: var(--primary-color);
+        }
+
+        .exam-date {
+            font-size: 14px;
+            color: var(--accent-color);
+        }
+
+        .days-left {
+            text-align: right;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .days-left-value {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            min-width: 60px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .days-urgent {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .days-soon {
+            background-color: #ffc107;
+            color: #212529;
+        }
+
+        .days-upcoming {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .days-distant {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            padding: 0 10px;
+            width: 100%;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .reset-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .save-message {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            border-radius: 8px;
+            background-color: #2ecc71;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            z-index: 1000;
+        }
+
+        .save-message.error {
+            background-color: #e74c3c;
+        }
+
+        .save-message.show {
+            opacity: 1;
+        }
+
+        /* SHARED STYLES */
+        
+        .view {
+            opacity: 0;
+            display: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .view.active {
+            opacity: 1;
+            display: block;
+        }
+
+        /* Footer styles */
+        footer {
+            margin-top: 2rem;
+            padding: 1rem 0;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #777;
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                margin: 1rem auto;
+            }
+
+            .time {
+                font-size: 2.2rem;
+            }
+
+            .prayer-times-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .nav-buttons {
+                padding: 10px;
+            }
+            
+            .nav-btn {
+                font-size: 14px;
+                padding: 8px 15px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .subtitle {
+                font-size: 14px;
+            }
+            
+            .subject-table caption {
+                font-size: 18px;
+                padding: 12px;
+            }
+            
+            .exam-name, .exam-date {
+                font-size: 15px;
+            }
+            
+            .btn {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .prayer-times-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-btn {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+            
+            h1 {
+                font-size: 22px;
+            }
+            
+            .subtitle {
+                font-size: 13px;
+            }
+            
+            .subject-table caption {
+                font-size: 16px;
+            }
+            
+            .exam-name, .exam-date {
+                font-size: 14px;
+            }
+            
+            .btn {
+                font-size: 13px;
+                padding: 8px 16px;
+            }
+        }
+
+        /* Add a circular toggle button for dark mode */
+        .toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        /* Responsive styles for toggle button */
+        @media (max-width: 480px) {
+            .toggle-btn {
+                width: 35px;
+                height: 35px;
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="toggle-btn" id="toggle-dark-mode">🌙</button>
+    <div class="container">
+        <div class="nav-buttons">
+            <button class="nav-btn active" id="prayer-btn">Prayer Times</button>
+            <button class="nav-btn" id="exam-btn">Exam Timetable</button>
+        </div>
+        
+        <!-- Prayer Times View -->
+        <div class="view active" id="prayer-view">
+            <h1>Prayer Times for Cairo</h1>
+            
+            <!-- Mosque SVG -->
+            <div class="masjid-container">
+                <svg class="masjid-svg" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" aria-label="Mosque illustration">
+                    <!-- Main Building -->
+                    <rect class="mosque-body" x="150" y="150" width="300" height="150" rx="5"/>
+                    
+                    <!-- Main Dome -->
+                    <path class="mosque-dome" d="M300 50 C220 50 200 150 200 150 L400 150 C400 150 380 50 300 50Z"/>
+                    
+                    <!-- Dome Top -->
+                    <path class="mosque-dome" d="M300 50 L300 20 L300 20 L310 30 L300 10 L290 30 L300 20 Z"/>
+                    
+                    <!-- Left Minaret -->
+                    <rect class="mosque-minaret" x="120" y="140" width="20" height="160"/>
+                    <polygon class="mosque-minaret" points="130,120 115,140 145,140"/>
+                    <rect class="mosque-minaret" x="125" y="100" width="10" height="20"/>
+                    <polygon class="mosque-minaret" points="130,80 125,100 135,100"/>
+                    
+                    <!-- Right Minaret -->
+                    <rect class="mosque-minaret" x="460" y="140" width="20" height="160"/>
+                    <polygon class="mosque-minaret" points="470,120 455,140 485,140"/>
+                    <rect class="mosque-minaret" x="465" y="100" width="10" height="20"/>
+                    <polygon class="mosque-minaret" points="470,80 465,100 475,100"/>
+                    
+                    <!-- Small Domes -->
+                    <path class="mosque-dome" d="M225 120 C205 120 200 150 200 150 L250 150 C250 150 245 120 225 120Z"/>
+                    <path class="mosque-dome" d="M375 120 C355 120 350 150 350 150 L400 150 C400 150 395 120 375 120Z"/>
+                    
+                    <!-- Windows -->
+                    <rect class="mosque-window" x="210" y="200" width="30" height="60" rx="15"/>
+                    <rect class="mosque-window" x="285" y="200" width="30" height="60" rx="15"/>
+                    <rect class="mosque-window" x="360" y="200" width="30" height="60" rx="15"/>
+                    
+                    <!-- Door -->
+                    <rect class="mosque-window" x="285" y="240" width="30" height="60" rx="3"/>
+                    
+                    <!-- Decorative Elements -->
+                    <line x1="150" y1="170" x2="450" y2="170" stroke="var(--bg-color)" stroke-width="2" opacity="0.5"/>
+                    <line x1="150" y1="270" x2="450" y2="270" stroke="var(--bg-color)" stroke-width="2" opacity="0.5"/>
+                </svg>
+            </div>
+            
+            <!-- Countdown to Maghrib -->
+            <div class="countdown-container">
+                <h2 id="countdown-title">Time Until Maghrib</h2>
+                <div class="time" id="countdown">Loading...</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress"></div>
+                </div>
+                <div class="prayer-info">
+                    <span>Fajr: <span id="fajr-time">--:--</span></span>
+                    <span>Maghrib: <span id="maghrib-time">--:--</span></span>
+                </div>
+            </div>
+            
+            <div id="prayer-times">
+                <h2>Today's Prayer Times</h2>
+                <div class="current-date" id="current-date">Loading date...</div>
+                <div class="prayer-times-grid" id="all-prayer-times">
+                    Loading all prayer times...
+                </div>
+            </div>
+        </div>
+        
+        <!-- Exam Timetable View -->
+        <div class="view" id="exam-view">
+            <h1>Exam Timetable</h1>
+            
+            <div class="exam-table-container" id="subjects-container">
+                <!-- Subject tables will be generated here -->
+            </div>
+
+            <div class="controls">
+                <button class="btn reset-btn" id="reset-btn">Reset</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p id="footer-text">Prayer times provided by AlAdhan API &copy; 2025</p>
+    </footer>
+
+    <script>
+        // Initialize global variables first to prevent reference errors
+        let exams = {};
+        
+        // Default exams data with original format
+        const defaultExams = {
+            "English (AQA)": [
+                { name: "Speaking", date: "April 11th" },
+                { name: "Reading & Listening", date: "May 19th" },
+                { name: "Writing", date: "May 28th" }
+            ],
+            "English (CIE)": [
+                { name: "Reading & Writing", date: "May 8th" },
+                { name: "Listening", date: "May 22nd" }
+            ],
+            "Maths": [
+                { name: "1H", date: "May 15th" },
+                { name: "2H", date: "June 4th" }
+            ],
+            "Chemistry": [
+                { name: "P4 Theory", date: "April 30th" },
+                { name: "P6 Practical", date: "May 15th" },
+                { name: "P2 Multi-Choice", date: "June 10th" }
+            ],
+            "Physics": [
+                { name: "P4 Theory", date: "May 9th" },
+                { name: "P6 Practical", date: "May 20th" },
+                { name: "P2 Multi-Choice", date: "June 4th" }
+            ],
+            "Computer Science": [
+                { name: "P1 Theory", date: "May 12th" },
+                { name: "P2 Practical", date: "May 26th" }
+            ]
+        };
+        
+        // Load the saved exams or use default
+        try {
+            const savedExams = localStorage.getItem('exams');
+            if (savedExams) {
+                exams = JSON.parse(savedExams);
+            } else {
+                exams = defaultExams;
+            }
+        } catch (e) {
+            console.error('Error loading saved exams:', e);
+            exams = defaultExams;
+        }
+        
+        // Function to save exams to localStorage
+        function saveExams(examsData) {
+            try {
+                localStorage.setItem('exams', JSON.stringify(examsData));
+            } catch (e) {
+                console.error('Error saving exams:', e);
+            }
+        }
+
+        // Toggle dark mode
+        document.getElementById('toggle-dark-mode').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            document.getElementById('toggle-dark-mode').textContent = isDark ? '☀️' : '🌙';
+        });
+
+        // Check for saved dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('toggle-dark-mode').textContent = '☀️';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        // =============== NAVIGATION CONTROLS ===============
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up navigation controls
+            document.getElementById('prayer-btn').addEventListener('click', function() {
+                // Update active button
+                document.getElementById('prayer-btn').classList.add('active');
+                document.getElementById('exam-btn').classList.remove('active');
+                
+                // Show prayer view and hide exam view with smooth transition
+                const prayerView = document.getElementById('prayer-view');
+                const examView = document.getElementById('exam-view');
+                
+                examView.style.opacity = '0';
+                setTimeout(() => {
+                    examView.classList.remove('active');
+                    prayerView.classList.add('active');
+                    setTimeout(() => {
+                        prayerView.style.opacity = '1';
+                        document.getElementById('footer-text').textContent = 'Prayer times provided by AlAdhan API &copy; 2025';
+                    }, 50);
+                }, 300);
+            });
+            
+            document.getElementById('exam-btn').addEventListener('click', function() {
+                // Update active button
+                document.getElementById('prayer-btn').classList.remove('active');
+                document.getElementById('exam-btn').classList.add('active');
+                
+                // Show exam view and hide prayer view with smooth transition
+                const prayerView = document.getElementById('prayer-view');
+                const examView = document.getElementById('exam-view');
+                
+                prayerView.style.opacity = '0';
+                setTimeout(() => {
+                    prayerView.classList.remove('active');
+                    examView.classList.add('active');
+                    setTimeout(() => {
+                        examView.style.opacity = '1';
+                        document.getElementById('footer-text').textContent = 'Exam Timetable &copy; 2025';
+                        
+                        // Force re-render exams when the exam tab is clicked
+                        console.log('Re-rendering exams on tab click');
+                        renderSubjects();
+                        updateAllDaysLeft();
+                        renderExamsInOrder();
+                    }, 50);
+                }, 300);
+            });
+        });
+        
+        // =============== PRAYER TIMES FUNCTIONALITY ===============
+        
+        // Function to get prayer times
+        async function getPrayerTimes() {
+            try {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = (today.getMonth() + 1).toString().padStart(2, '0');
+                const day = today.getDate().toString().padStart(2, '0');
+                const dateStr = `${year}-${month}-${day}`;
+
+                // Check if we have cached prayer times for today
+                const cachedTimes = localStorage.getItem(`prayerTimes_${dateStr}`);
+                if (cachedTimes) {
+                    console.log('Using cached prayer times');
+                    return JSON.parse(cachedTimes);
+                }
+
+                console.log('Fetching prayer times from API...', dateStr);
+                
+                // Using a different API endpoint that should be more reliable
+                const apiUrl = `https://api.aladhan.com/v1/calendarByCity?city=Cairo&country=Egypt&method=5&month=${month}&year=${year}`;
+                console.log('API URL:', apiUrl);
+                
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    console.error(`API response error: ${response.status} ${response.statusText}`);
+                    throw new Error(`Network response was not ok: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Prayer times data received:', data ? 'valid data' : 'invalid data');
+                
+                if (!data || !data.data || !data.data[day - 1] || !data.data[day - 1].timings) {
+                    console.error('Invalid data format received:', data);
+                    throw new Error('Invalid data format received from API');
+                }
+                
+                const timings = data.data[day - 1].timings;
+                
+                // Clean up the timing values to remove the (EET) suffix
+                const cleanTimings = {};
+                for (const [prayer, time] of Object.entries(timings)) {
+                    cleanTimings[prayer] = time.split(' ')[0];
+                }
+                
+                // Cache the prayer times
+                localStorage.setItem(`prayerTimes_${dateStr}`, JSON.stringify(cleanTimings));
+                
+                return cleanTimings;
+            } catch (error) {
+                console.error('Error fetching prayer times:', error);
+                
+                // If API fails, try to use yesterday's cached data if available
+                try {
+                    const yesterday = new Date();
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    const prevYear = yesterday.getFullYear();
+                    const prevMonth = (yesterday.getMonth() + 1).toString().padStart(2, '0');
+                    const prevDay = yesterday.getDate().toString().padStart(2, '0');
+                    const prevDateStr = `${prevYear}-${prevMonth}-${prevDay}`;
+                    
+                    const cachedTimes = localStorage.getItem(`prayerTimes_${prevDateStr}`);
+                    if (cachedTimes) {
+                        console.log('Using previous day\'s cached prayer times as fallback');
+                        return JSON.parse(cachedTimes);
+                    }
+                } catch (fallbackError) {
+                    console.error('Error using cached fallback:', fallbackError);
+                }
+                
+                // Ultimate fallback
+                console.log('Using hardcoded fallback prayer times');
+                return {
+                    Fajr: '05:30',
+                    Sunrise: '06:45', 
+                    Dhuhr: '12:15',
+                    Asr: '15:30',
+                    Maghrib: '18:00',
+                    Isha: '19:30'
+                };
+            }
+        }
+
+        // Format time remaining
+        function formatTimeRemaining(ms) {
+            try {
+                if (ms < 0) {
+                    console.warn('Negative time value:', ms);
+                    ms = 0; // Ensure we don't have negative time
+                }
+                const totalSeconds = Math.floor(ms / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            } catch (error) {
+                console.error('Error formatting time:', error);
+                return '00:00:00';
+            }
+        }
+
+        // 24 hour to 12 hour format converter
+        function formatTo12Hour(timeStr) {
+            const [hour, minute] = timeStr.split(':');
+            const hourNum = parseInt(hour, 10);
+            const period = hourNum >= 12 ? 'PM' : 'AM';
+            const hour12 = hourNum % 12 || 12;
+            return `${hour12}:${minute} ${period}`;
+        }
+
+        // Parse time string to Date object
+        function parseTime(timeStr) {
+            try {
+                const [hour, minute] = timeStr.split(':');
+                const date = new Date();
+                date.setHours(parseInt(hour, 10), parseInt(minute, 10), 0, 0);
+                return date;
+            } catch (error) {
+                console.error('Error parsing time:', error);
+                return new Date(); // Return current time if parsing fails
+            }
+        }
+
+        // Update progress bar
+        function updateProgress(startTime, endTime, currentTime) {
+            try {
+                const total = endTime - startTime;
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(100, Math.max(0, (elapsed / total) * 100));
+                document.getElementById('progress').style.width = `${progress}%`;
+            } catch (error) {
+                console.error('Error updating progress:', error);
+            }
+        }
+
+        // Request permission for notifications
+        if (Notification.permission !== 'granted') {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    console.log('Notification permission granted.');
+                }
+            });
+        }
+
+        // Function to send countdown notification
+        function sendCountdownNotification(title, body) {
+            if (Notification.permission === 'granted') {
+                new Notification(title, {
+                    body: body,
+                    icon: 'https://example.com/icon.png' // Replace with a valid icon URL
+                });
+            }
+        }
+
+        // Update countdown function to send notifications
+        async function updateCountdown() {
+            try {
+                const times = await getPrayerTimes();
+                if (!times) {
+                    document.getElementById('countdown').textContent = 'Error loading prayer times';
+                    return;
+                }
+
+                const countdownElement = document.getElementById('countdown');
+                const countdownTitleElement = document.getElementById('countdown-title');
+                const fajrTimeElement = document.getElementById('fajr-time');
+                const maghribTimeElement = document.getElementById('maghrib-time');
+
+                if (!countdownElement || !countdownTitleElement || !fajrTimeElement || !maghribTimeElement) {
+                    console.error('Required DOM elements not found');
+                    return;
+                }
+
+                const fajrTime = parseTime(times.Fajr);
+                const maghribTime = parseTime(times.Maghrib);
+
+                fajrTimeElement.textContent = formatTo12Hour(times.Fajr);
+                maghribTimeElement.textContent = formatTo12Hour(times.Maghrib);
+
+                if (window.countdownInterval) {
+                    clearInterval(window.countdownInterval);
+                }
+
+                const updateTimer = () => {
+                    try {
+                        const now = new Date();
+                        let nextFajrTime = new Date(fajrTime);
+                        let prevMaghribTime = new Date(maghribTime);
+                        prevMaghribTime.setDate(prevMaghribTime.getDate() - 1);
+
+                        if (now > fajrTime && now < maghribTime) {
+                            const timeRemaining = maghribTime - now;
+                            countdownTitleElement.textContent = "Time Until Maghrib";
+                            countdownElement.textContent = formatTimeRemaining(timeRemaining);
+                            updateProgress(fajrTime, maghribTime, now);
+                        } else {
+                            if (now > maghribTime) {
+                                nextFajrTime.setDate(nextFajrTime.getDate() + 1);
+                            }
+                            const timeRemaining = nextFajrTime - now;
+                            countdownTitleElement.textContent = "Time Until Fajr";
+                            countdownElement.textContent = formatTimeRemaining(timeRemaining);
+
+                            if (now > maghribTime) {
+                                updateProgress(maghribTime, nextFajrTime, now);
+                            } else {
+                                updateProgress(prevMaghribTime, fajrTime, now);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error in update timer:', error);
+                    }
+                };
+
+                updateTimer();
+
+                window.countdownInterval = setInterval(updateTimer, 1000);
+            } catch (error) {
+                console.error('Error in updateCountdown:', error);
+                document.getElementById('countdown').textContent = 'Error updating countdown';
+            }
+        }
+
+        // Display all prayer times
+        async function displayAllPrayerTimes() {
+            try {
+                const today = new Date();
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const dateElement = document.getElementById('current-date');
+                if (dateElement) {
+                    dateElement.textContent = today.toLocaleDateString('en-US', options);
+                }
+                
+                const times = await getPrayerTimes();
+                console.log('Prayer times received for display:', times);
+                
+                if (!times) {
+                    console.error('Prayer times data is undefined');
+                    throw new Error('Prayer times data is undefined');
+                }
+                
+                const prayerTimesContainer = document.getElementById('all-prayer-times');
+                if (!prayerTimesContainer) {
+                    console.error('Prayer times container not found');
+                    return;
+                }
+                
+                const prayerNames = {
+                    'Fajr': 'Fajr',
+                    'Sunrise': 'Sunrise',
+                    'Dhuhr': 'Dhuhr',
+                    'Asr': 'Asr',
+                    'Maghrib': 'Maghrib',
+                    'Isha': 'Isha'
+                };
+                
+                let html = '';
+                for (const [key, name] of Object.entries(prayerNames)) {
+                    const displayTime = times[key] ? formatTo12Hour(times[key]) : '-- : --';
+                    html += `
+                        <div class="prayer-time-item ${key === 'Fajr' || key === 'Maghrib' ? 'highlighted' : ''}">
+                            <div class="prayer-name">${name}</div>
+                            <div class="prayer-time">${displayTime}</div>
+                        </div>
+                    `;
+                }
+                
+                prayerTimesContainer.innerHTML = html;
+                console.log('Prayer times displayed successfully');
+            } catch (error) {
+                console.error('Error displaying all prayer times:', error);
+                const prayerTimesContainer = document.getElementById('all-prayer-times');
+                if (prayerTimesContainer) {
+                    prayerTimesContainer.innerHTML = 'Error loading prayer times. Please try again.';
+                }
+            }
+        }
+
+        // =============== EXAM TIMETABLE FUNCTIONALITY ===============
+
+        // Function to render exams in chronological order
+        function renderExamsInOrder() {
+            try {
+                console.log('Rendering exams in chronological order...');
+                console.log('Current exams data:', exams);
+                
+                // If exams is undefined or empty, use the default exams
+                if (!exams || Object.keys(exams).length === 0) {
+                    console.log('Using default exams data for rendering');
+                    exams = defaultExams;
+                    saveExams(exams);
+                }
+                
+                const examsArray = [];
+                
+                Object.entries(exams).forEach(([subject, examList]) => {
+                    console.log(`Processing subject: ${subject} with ${examList.length} exams`);
+                    examList.forEach(exam => {
+                        try {
+                            if (exam.date) {
+                                // Parse the date string (e.g., "April 11th")
+                                const dateStr = exam.date;
+                                const regex = /([A-Za-z]+)\s+(\d+)(?:st|nd|rd|th)/;
+                                const match = dateStr.match(regex);
+                                
+                                if (match) {
+                                    const monthName = match[1];
+                                    const day = parseInt(match[2], 10);
+                                    const year = new Date().getFullYear();
+                                    const monthIndex = new Date(`${monthName} 1, 2000`).getMonth();
+                                    const dateObj = new Date(year, monthIndex, day);
+                                    
+                                    if (!isNaN(dateObj.getTime())) {
+                                        examsArray.push({
+                                            subject: subject,
+                                            name: exam.name,
+                                            date: exam.date,
+                                            dateObj: dateObj
+                                        });
+                                    } else {
+                                        console.error(`Invalid date object for exam ${exam.name} in ${subject}: ${dateStr}`);
+                                    }
+                                } else {
+                                    console.error(`Could not parse date string for exam ${exam.name} in ${subject}: ${dateStr}`);
+                                }
+                            } else {
+                                console.error(`No date found for exam ${exam.name} in ${subject}`);
+                            }
+                        } catch (error) {
+                            console.error(`Error processing exam ${exam.name} in ${subject}:`, error);
+                        }
+                    });
+                });
+                
+                if (examsArray.length === 0) {
+                    console.error('No valid exams to display');
+                    document.getElementById('exam-view').innerHTML += '<p>No valid exams found. Please check your exam data.</p>';
+                    return;
+                }
+                
+                console.log(`Found ${examsArray.length} valid exams to display`);
+                
+                console.log('Sorting exams by date...');
+                examsArray.sort((a, b) => a.dateObj - b.dateObj);
+                
+                const examView = document.getElementById('exam-view');
+                if (!examView) {
+                    console.error('Exam view container not found');
+                    return;
+                }
+                
+                // Remove any existing chronological elements
+                const existingTable = examView.querySelector('.chronological-table');
+                if (existingTable) {
+                    existingTable.remove();
+                }
+                
+                // Also remove any existing section titles to avoid duplication
+                const existingTitles = examView.querySelectorAll('.section-title');
+                existingTitles.forEach(title => {
+                    if (title.textContent === 'Exams in Chronological Order') {
+                        title.remove();
+                    }
+                });
+                
+                const table = document.createElement('table');
+                table.className = 'subject-table chronological-table';
+                
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                
+                const subjectHeader = document.createElement('th');
+                subjectHeader.textContent = 'Subject';
+                
+                const nameHeader = document.createElement('th');
+                nameHeader.textContent = 'Exam';
+                
+                const dateHeader = document.createElement('th');
+                dateHeader.textContent = 'Date';
+                
+                headerRow.appendChild(subjectHeader);
+                headerRow.appendChild(nameHeader);
+                headerRow.appendChild(dateHeader);
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+                
+                const tbody = document.createElement('tbody');
+                
+                examsArray.forEach((exam, index) => {
+                    const row = document.createElement('tr');
+                    
+                    const subjectCell = document.createElement('td');
+                    subjectCell.textContent = exam.subject;
+                    
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = exam.name;
+                    
+                    const dateCell = document.createElement('td');
+                    dateCell.textContent = exam.date;
+                    
+                    row.appendChild(subjectCell);
+                    row.appendChild(nameCell);
+                    row.appendChild(dateCell);
+                    tbody.appendChild(row);
+                });
+                
+                table.appendChild(tbody);
+                
+                // Add a heading before the table
+                const heading = document.createElement('h2');
+                heading.textContent = 'Exams in Chronological Order';
+                heading.className = 'section-title';
+                
+                examView.appendChild(heading);
+                examView.appendChild(table);
+                console.log('Exams rendered successfully');
+            } catch (error) {
+                console.error('Error rendering exams in order:', error);
+            }
+        }
+
+        // Function to render subjects
+        function renderSubjects() {
+            try {
+                console.log('Rendering subjects...');
+                console.log('Current exams data:', exams);
+                
+                // If exams is undefined or empty, use the default exams
+                if (!exams || Object.keys(exams).length === 0) {
+                    console.log('Using default exams data for rendering');
+                    exams = defaultExams;
+                    saveExams(exams);
+                }
+                
+                const container = document.getElementById('subjects-container');
+                if (!container) {
+                    console.error('Subjects container not found');
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                Object.entries(exams).forEach(([subject, examList]) => {
+                    console.log(`Building table for subject: ${subject} with ${examList.length} exams`);
+                    const tableContainer = document.createElement('div');
+                    tableContainer.className = 'table-container';
+                    
+                    const table = document.createElement('table');
+                    table.className = 'subject-table';
+                    
+                    // Create table caption (subject name)
+                    const caption = document.createElement('caption');
+                    const subjectSpan = document.createElement('span');
+                    subjectSpan.textContent = subject;
+                    subjectSpan.contentEditable = "true";
+                    subjectSpan.dataset.originalSubject = subject;
+                    
+                    caption.appendChild(subjectSpan);
+                    table.appendChild(caption);
+                    
+                    // Create table headers
+                    const thead = document.createElement('thead');
+                    const headerRow = document.createElement('tr');
+                    
+                    const nameHeader = document.createElement('th');
+                    nameHeader.textContent = 'Exam';
+                    
+                    const dateHeader = document.createElement('th');
+                    dateHeader.textContent = 'Date';
+                    
+                    const daysLeftHeader = document.createElement('th');
+                    daysLeftHeader.textContent = 'Days Left';
+                    
+                    headerRow.appendChild(nameHeader);
+                    headerRow.appendChild(dateHeader);
+                    headerRow.appendChild(daysLeftHeader);
+                    thead.appendChild(headerRow);
+                    table.appendChild(thead);
+                    
+                    // Create table body
+                    const tbody = document.createElement('tbody');
+                    
+                    examList.forEach((exam, index) => {
+                        console.log(`Adding exam: ${exam.name}, Date: ${exam.date}`);
+                        const row = document.createElement('tr');
+                        row.dataset.index = index;
+                        row.dataset.subject = subject;
+                        row.dataset.examDate = exam.date;
+                        
+                        const nameCell = document.createElement('td');
+                        nameCell.className = 'exam-name';
+                        nameCell.textContent = exam.name;
+                        
+                        const dateCell = document.createElement('td');
+                        dateCell.className = 'exam-date';
+                        dateCell.textContent = exam.date;
+                        
+                        const daysLeftCell = document.createElement('td');
+                        daysLeftCell.className = 'days-left';
+                        daysLeftCell.dataset.examDate = exam.date;
+                        
+                        // Calculate days left
+                        const daysLeft = calculateDaysLeft(exam.date);
+                        
+                        // Skip rendering if daysLeft is 999 (invalid date)
+                        if (daysLeft === 999) {
+                            console.warn(`Skipping invalid date for ${exam.name}: ${exam.date}`);
+                            return;
+                        }
+                        
+                        const daysLeftSpan = document.createElement('span');
+                        daysLeftSpan.className = 'days-left-value';
+                        updateDaysLeftDisplay(daysLeftSpan, daysLeft);
+                        
+                        daysLeftCell.appendChild(daysLeftSpan);
+                        
+                        row.appendChild(nameCell);
+                        row.appendChild(dateCell);
+                        row.appendChild(daysLeftCell);
+                        tbody.appendChild(row);
+                    });
+                    
+                    table.appendChild(tbody);
+                    tableContainer.appendChild(table);
+                    container.appendChild(tableContainer);
+                });
+                
+                console.log('Subjects rendered successfully');
+            } catch (error) {
+                console.error('Error rendering subjects:', error);
+            }
+        }
+
+        // Function to update days left display
+        function updateDaysLeftDisplay(element, daysLeft) {
+            // Clear existing classes
+            element.classList.remove('days-urgent', 'days-soon', 'days-upcoming', 'days-distant');
+
+            // Add appropriate class based on urgency
+            if (daysLeft < 0) {
+                element.classList.add('days-urgent');
+                element.textContent = 'Past';
+            } else if (daysLeft === 0) {
+                element.classList.add('days-urgent');
+                element.textContent = 'Today';
+            } else if (daysLeft <= 7) {
+                element.classList.add('days-urgent');
+                element.textContent = daysLeft + ' days';
+            } else if (daysLeft <= 14) {
+                element.classList.add('days-soon');
+                element.textContent = daysLeft + ' days';
+            } else if (daysLeft <= 30) {
+                element.classList.add('days-upcoming');
+                element.textContent = daysLeft + ' days';
+            } else {
+                element.classList.add('days-distant');
+                element.textContent = daysLeft + ' days';
+            }
+        }
+
+        // Function to update all days left counters
+        function updateAllDaysLeft() {
+            const daysLeftCells = document.querySelectorAll('.days-left');
+
+            daysLeftCells.forEach(cell => {
+                const examDate = cell.dataset.examDate;
+                const daysLeft = calculateDaysLeft(examDate);
+                const daysLeftSpan = cell.querySelector('.days-left-value');
+
+                if (daysLeftSpan) {
+                    updateDaysLeftDisplay(daysLeftSpan, daysLeft);
+                }
+            });
+        }
+
+        // Function to calculate days left until an exam
+        function calculateDaysLeft(dateStr) {
+            try {
+                if (!dateStr || dateStr.toLowerCase().includes('tbd')) {
+                    return 999;
+                }
+                
+                const regex = /([A-Za-z]+)\s+(\d+)(?:st|nd|rd|th)/;
+                const match = dateStr.match(regex);
+                
+                if (!match) {
+                    console.error('Could not parse exam date:', dateStr);
+                    return 999;
+                }
+                
+                const monthName = match[1];
+                const day = parseInt(match[2], 10);
+                const year = new Date().getFullYear();
+                const monthIndex = new Date(`${monthName} 1, 2000`).getMonth();
+                const examDate = new Date(year, monthIndex, day);
+                
+                if (isNaN(examDate.getTime())) {
+                    console.error('Invalid date object for:', dateStr);
+                    return 999;
+                }
+                
+                const today = new Date();
+                const diffTime = examDate.getTime() - today.getTime();
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                return diffDays;
+            } catch (error) {
+                console.error('Error calculating days left:', error, dateStr);
+                return 999;
+            }
+        }
+
+        // Event listeners for exam timetable buttons
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            if (confirm('Are you sure you want to reset to the default exam timetable? All changes will be lost.')) {
+                exams = JSON.parse(JSON.stringify(defaultExams));
+                saveExams(exams);
+                renderSubjects();
+                updateAllDaysLeft();
+                renderExamsInOrder();
+            }
+        });
+        
+        // =============== INITIALIZATION ===============
+
+        // Add loading indicator for prayer times
+        function showLoadingIndicator() {
+            document.getElementById('countdown').textContent = 'Loading...';
+        }
+
+        // Call showLoadingIndicator before fetching prayer times
+        showLoadingIndicator();
+        console.log('Initializing application...');
+
+        // Wrap initialization in an immediately invoked function to handle errors
+        (async function initializePrayerTimes() {
+            try {
+                console.log('Initializing prayer times...');
+                await displayAllPrayerTimes();
+                await updateCountdown();
+                console.log('Prayer times initialized successfully');
+            } catch (error) {
+                console.error('Error initializing prayer times:', error);
+                document.getElementById('countdown').textContent = 'Error loading prayer times';
+                document.getElementById('all-prayer-times').innerHTML = 'Error loading prayer times. Please try again.';
+            }
+        })();
+
+        // Initialize exam timetable
+        console.log('Initializing exam timetable...');
+        renderSubjects();
+        updateAllDaysLeft();
+
+        // Fix for the exam timetable rendering
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM fully loaded');
+            const prayerView = document.getElementById('prayer-view');
+            prayerView.style.opacity = '1';
+
+            // Ensure exam timetable is properly initialized
+            renderSubjects();
+
+            // Update exam timetable data every minute
+            setInterval(updateAllDaysLeft, 60000);
+        });
+
+        // Main initialization function
+        function initializeApp() {
+            console.log('Initializing application...');
+
+            showLoadingIndicator();
+
+            (async function initializePrayerTimes() {
+                try {
+                    console.log('Initializing prayer times...');
+                    await displayAllPrayerTimes();
+                    await updateCountdown();
+                    console.log('Prayer times initialized successfully');
+                } catch (error) {
+                    console.error('Error initializing prayer times:', error);
+                    document.getElementById('countdown').textContent = 'Error loading prayer times';
+                    document.getElementById('all-prayer-times').innerHTML = 'Error loading prayer times. Please try again.';
+                }
+            })();
+
+            console.log('Initializing exam timetable...');
+            try {
+                renderSubjects();
+                updateAllDaysLeft();
+                renderExamsInOrder();
+                console.log('Exam timetable initialized successfully');
+            } catch (error) {
+                console.error('Error initializing exam timetable:', error);
+            }
+
+            console.log('App initialization complete');
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('DOM fully loaded - initializing app');
+                initializeApp();
+            });
+        } else {
+            console.log('DOM already loaded - initializing app immediately');
+            initializeApp();
+        }
+    </script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/testing/sw.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(function(error) {
+                        console.log('ServiceWorker registration failed: ', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
