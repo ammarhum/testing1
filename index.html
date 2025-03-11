@@ -2,13 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Prayer Times Countdown</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prayer Times & Exam Countdown</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
+    <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Scheherazade+New&display=swap" rel="stylesheet">
     <!-- Add meta tags for SEO -->
     <meta name="description" content="Prayer Times and Exam Timetable for Cairo">
     <meta name="keywords" content="Prayer Times, Exam Timetable, Cairo">
@@ -137,7 +136,7 @@
 
         .countdown-container:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
 
         .time {
@@ -145,11 +144,6 @@
             font-weight: 600;
             color: var(--primary-color);
             margin: 0.8rem 0;
-            transition: color 0.3s ease;
-        }
-
-        .countdown-container:hover .time {
-            color: var(--accent-color);
         }
 
         .progress-container {
@@ -164,13 +158,8 @@
         .progress-bar {
             width: 0%;
             height: 100%;
-            background: linear-gradient(90deg, 
-                var(--accent-color), 
-                var(--primary-color), 
-                var(--accent-color));
-            background-size: 200% 100%;
-            animation: slide-gradient 3s ease infinite;
-            transition: width 0.8s ease-in-out;
+            background: linear-gradient(90deg, var(--accent-color), #2ecc71);
+            transition: width 1s ease;
         }
 
         .prayer-info {
@@ -188,12 +177,6 @@
             background-color: white;
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        #prayer-times:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
 
         #prayer-times h2 {
@@ -214,7 +197,6 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
-            transition: all 0.3s ease;
         }
 
         .prayer-time-item {
@@ -225,7 +207,6 @@
             border-radius: 10px;
             background-color: var(--bg-color);
             transition: all 0.3s ease;
-            padding-left: 20px; /* Add space for the indicator dot */
         }
         
         .prayer-time-item.next-prayer {
@@ -236,11 +217,7 @@
 
         .prayer-time-item:hover {
             transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .prayer-time-item.current {
-            animation: gentle-pulse 2s infinite;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
         }
 
         .prayer-name {
@@ -456,8 +433,8 @@
                 font-size: 24px;
             }
             
-            h2 {
-                font-size: 20px;
+            .subtitle {
+                font-size: 14px;
             }
             
             .subject-table caption {
@@ -489,8 +466,8 @@
                 font-size: 22px;
             }
             
-            h2 {
-                font-size: 18px;
+            .subtitle {
+                font-size: 13px;
             }
             
             .subject-table caption {
@@ -505,266 +482,6 @@
                 font-size: 13px;
                 padding: 8px 16px;
             }
-        }
-
-        /* ENHANCEMENT 1: Subtle Background Effects */
-        /* Background pattern with animated gradient */
-        body:before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.03;
-            background-image: 
-                linear-gradient(135deg, 
-                var(--primary-color) 25%, transparent 25%),
-                linear-gradient(225deg, var(--primary-color) 25%, transparent 25%),
-                linear-gradient(45deg, var(--primary-color) 25%, transparent 25%),
-                linear-gradient(315deg, var(--primary-color) 25%, transparent 25%);
-            background-position: 10px 0, 10px 0, 0 0, 0 0;
-            background-size: 20px 20px;
-            background-repeat: repeat;
-            animation: pattern-shift 60s linear infinite;
-        }
-        
-        @keyframes pattern-shift {
-            0% { background-position: 0 0, 10px 0, 0 0, 0 0; }
-            100% { background-position: 500px 500px, 510px 500px, 500px 500px, 500px 500px; }
-        }
-
-        /* ENHANCEMENT 2: Microinteractions */
-        /* Button click effect */
-        .nav-btn:active, .btn:active, .toggle-btn:active {
-            transform: scale(0.96);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-        }
-        
-        /* Prayer time indicator dots */
-        .prayer-time-item:before {
-            content: '';
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background-color: var(--accent-color);
-            border-radius: 50%;
-            margin-right: 5px;
-            position: absolute;
-            left: 8px;
-            top: 50%;
-            transform: translateY(-50%) scale(0);
-            transition: transform 0.3s ease;
-            opacity: 0.7;
-        }
-        
-        .prayer-time-item:hover:before {
-            transform: translateY(-50%) scale(1);
-        }
-        
-        .prayer-time-item.current:before {
-            transform: translateY(-50%) scale(1);
-            background-color: #2ecc71;
-        }
-        
-        /* View transition effect */
-        .view {
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
-        }
-        
-        .view.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* Active tab indicator animation */
-        @keyframes tab-indicator {
-            0% { width: 0; left: 50%; }
-            100% { width: 100%; left: 0; }
-        }
-        
-        .nav-btn.active:after {
-            animation: tab-indicator 0.3s forwards;
-        }
-        
-        /* Microinteraction for countdown time */
-        .time {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .time:after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background-color: var(--accent-color);
-            transition: width 0.3s ease, left 0.3s ease;
-        }
-        
-        .countdown-container:hover .time:after {
-            width: 100%;
-            left: 0;
-        }
-        
-        /* Ripple effect for buttons */
-        .btn, .nav-btn, .toggle-btn {
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .btn:after, .nav-btn:after, .toggle-btn:after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.5);
-            opacity: 0;
-            border-radius: 100%;
-            transform: scale(1, 1) translate(-50%, -50%);
-            transform-origin: 50% 50%;
-        }
-        
-        .btn:focus:not(:active)::after, 
-        .nav-btn:focus:not(:active)::after, 
-        .toggle-btn:focus:not(:active)::after {
-            animation: ripple 0.8s ease-out;
-        }
-        
-        @keyframes ripple {
-            0% {
-                transform: scale(0, 0);
-                opacity: 0.5;
-            }
-            20% {
-                transform: scale(25, 25);
-                opacity: 0.3;
-            }
-            100% {
-                opacity: 0;
-                transform: scale(40, 40);
-            }
-        }
-        
-        /* ENHANCEMENT 3: Improved Mobile View */
-        /* Base responsive improvements */
-        @media (max-width: 768px) {
-            .container {
-                width: 95%;
-                margin: 1rem auto;
-            }
-            
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            h2 {
-                font-size: 1.5rem;
-            }
-            
-            .prayer-times-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .countdown-container {
-                padding: 1.2rem;
-            }
-            
-            .time {
-                font-size: 2.4rem;
-            }
-            
-            .prayer-info {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .nav-buttons {
-                position: sticky;
-                top: 0;
-                padding: 10px 0;
-                background-color: var(--bg-color);
-                z-index: 100;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .prayer-times-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            
-            .nav-btn {
-                padding: 8px 15px;
-                font-size: 0.9rem;
-            }
-            
-            .time {
-                font-size: 2rem;
-            }
-            
-            .container {
-                width: 98%;
-            }
-            
-            h1 {
-                font-size: 1.6rem;
-            }
-            
-            /* Improved spacing for mobile */
-            .prayer-time-item {
-                padding: 12px 10px;
-            }
-            
-            .countdown-container {
-                padding: 1rem;
-                margin-bottom: 1rem;
-            }
-            
-            /* Adjust exam layout for mobile */
-            .exam-timetable {
-                grid-template-columns: 1fr;
-            }
-            
-            .exam-info {
-                grid-template-columns: 1fr;
-            }
-            
-            /* Full width subject items */
-            .subject-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .subject-dates {
-                margin-top: 10px;
-                flex-wrap: wrap;
-            }
-            
-            /* Improved button touch targets */
-            .btn, .nav-btn, .toggle-btn {
-                min-height: 44px; /* Minimum touch target size */
-                line-height: 1;
-            }
-        }
-        
-        /* Fluid typography for better readability on all screens */
-        @media (max-width: 768px) {
-            body {
-                font-size: calc(14px + 0.2vw);
-            }
-            
-            h1 { font-size: calc(1.5rem + 1vw); }
-            h2 { font-size: calc(1.3rem + 0.5vw); }
-            h3 { font-size: calc(1.1rem + 0.3vw); }
         }
 
         /* Add a circular toggle button for dark mode */
@@ -855,12 +572,15 @@
         
         .prayer-time-item {
             transition: all 0.3s ease;
-            padding-left: 20px; /* Add space for the indicator dot */
         }
         
         .prayer-time-item:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .prayer-time-item.current {
+            animation: gentle-pulse 2s infinite;
         }
         
         /* Enhanced UI elements */
@@ -919,6 +639,11 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
         
+        /* Entrance animations */
+        .view {
+            animation: subtle-fade-in 0.5s ease-out;
+        }
+        
         /* Improved masjid SVG */
         .masjid-svg {
             transition: all 0.5s ease;
@@ -967,42 +692,28 @@
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
-
-        /* Floating particles for background */
-        .particles-js {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            pointer-events: none;
-        }
-
-        /* Add CSS for the Hijri date display */
+        
+        /* Hijri date display */
         .hijri-date {
             display: inline-block;
             margin-left: 10px;
-            font-size: 0.9em;
+            font-size: 1em;
             color: var(--accent-color);
-            padding: 2px 6px;
-            border-radius: 4px;
-            background-color: rgba(var(--primary-color-rgb), 0.08);
+            direction: rtl;
+            font-family: 'Amiri', 'Scheherazade New', serif;
         }
     </style>
 </head>
 <body>
-    <!-- Particles Background -->
-    <div id="particles-js"></div>
     <button class="toggle-btn" id="toggle-dark-mode">🌙</button>
     <div class="container">
         <div class="nav-buttons">
-            <button class="nav-btn active" id="prayer-btn" data-view="prayer">Prayer Times</button>
-            <button class="nav-btn" id="exam-btn" data-view="exam">Exam Timetable</button>
+            <button class="nav-btn active" id="prayer-btn">Prayer Times</button>
+            <button class="nav-btn" id="exam-btn">Exam Timetable</button>
         </div>
         
         <!-- Prayer Times View -->
-        <div class="view active prayer-view" id="prayer-view">
+        <div class="view active" id="prayer-view">
             <h1>Prayer Times for Cairo</h1>
             
             <!-- Mosque SVG -->
@@ -1070,7 +781,7 @@
         </div>
         
         <!-- Exam Timetable View -->
-        <div class="view exam-view" id="exam-view">
+        <div class="view" id="exam-view">
             <h1>Exam Timetable</h1>
             
             <div class="exam-table-container" id="subjects-container">
@@ -1087,6 +798,9 @@
         <p id="footer-text">Prayer times provided by AlAdhan API &copy; 2025</p>
     </footer>
 
+    <!-- Add the hijri-date library -->
+    <script src="https://cdn.jsdelivr.net/npm/hijri-date/lib/hijri-date.js"></script>
+
     <script>
         // Initialize global variables first to prevent reference errors
         let exams = {};
@@ -1094,33 +808,33 @@
         // Default exams data with original format
         const defaultExams = {
             "English (AQA)": [
-                { name: "Speaking", date: "April 11th" },
-                { name: "Reading & Listening", date: "May 19th" },
-                { name: "Writing", date: "May 28th" }
-            ],
-            "English (CIE)": [
-                { name: "Reading & Writing", date: "May 8th" },
-                { name: "Listening", date: "May 22nd" }
-            ],
-            "Maths": [
-                { name: "1H", date: "May 15th" },
-                { name: "2H", date: "June 4th" }
-            ],
-            "Chemistry": [
-                { name: "P4 Theory", date: "April 30th" },
-                { name: "P6 Practical", date: "May 15th" },
-                { name: "P2 Multi-Choice", date: "June 10th" }
-            ],
-            "Physics": [
-                { name: "P4 Theory", date: "May 9th" },
-                { name: "P6 Practical", date: "May 20th" },
-                { name: "P2 Multi-Choice", date: "June 4th" }
-            ],
-            "Computer Science": [
-                { name: "P1 Theory", date: "May 12th" },
-                { name: "P2 Practical", date: "May 26th" }
-            ]
-        };
+                 { name: "Speaking", date: "April 11th" },
+                 { name: "Reading & Listening", date: "May 19th" },
+                 { name: "Writing", date: "May 28th" }
+             ],
+             "English (CIE)": [
+                 { name: "Reading & Writing", date: "May 8th" },
+                 { name: "Listening", date: "May 22nd" }
+             ],
+             "Maths": [
+                 { name: "1H", date: "May 15th" },
+                 { name: "2H", date: "June 4th" }
+             ],
+             "Chemistry": [
+                 { name: "P4 Theory", date: "April 30th" },
+                 { name: "P6 Practical", date: "May 15th" },
+                 { name: "P2 Multi-Choice", date: "June 10th" }
+             ],
+             "Physics": [
+                 { name: "P4 Theory", date: "May 9th" },
+                 { name: "P6 Practical", date: "May 20th" },
+                 { name: "P2 Multi-Choice", date: "June 4th" }
+             ],
+             "Computer Science": [
+                 { name: "P1 Theory", date: "May 12th" },
+                 { name: "P2 Practical", date: "May 21st" }
+             ]
+         };
         
         // Load the saved exams or use default
         try {
@@ -1166,208 +880,53 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Set up navigation controls
             document.getElementById('prayer-btn').addEventListener('click', function() {
+                // Update active button
                 document.getElementById('prayer-btn').classList.add('active');
                 document.getElementById('exam-btn').classList.remove('active');
-                updateView();
+                
+                // Show prayer view and hide exam view with smooth transition
+                const prayerView = document.getElementById('prayer-view');
+                const examView = document.getElementById('exam-view');
+                
+                examView.style.opacity = '0';
+                setTimeout(() => {
+                    examView.classList.remove('active');
+                    prayerView.classList.add('active');
+                    setTimeout(() => {
+                        prayerView.style.opacity = '1';
+                        document.getElementById('footer-text').textContent = 'Prayer times provided by AlAdhan API &copy; 2025';
+                    }, 50);
+                }, 300);
             });
-
+            
             document.getElementById('exam-btn').addEventListener('click', function() {
+                // Update active button
                 document.getElementById('prayer-btn').classList.remove('active');
                 document.getElementById('exam-btn').classList.add('active');
-                updateView();
-            });
-
-            // Update view based on active button
-            function updateView() {
-                // Hide all views with animation
-                document.querySelectorAll('.view').forEach(view => {
-                    view.classList.remove('active');
-                    setTimeout(() => {
-                        view.style.display = 'none';
-                    }, 300); // Match the transition duration
-                });
                 
-                // Show selected view with animation
-                const activeBtn = document.querySelector('.nav-btn.active');
-                if (activeBtn) {
-                    const viewId = activeBtn.dataset.view;
-                    const view = document.querySelector(`.${viewId}-container`);
-                    if (view) {
-                        setTimeout(() => {
-                            view.style.display = 'block';
-                            // Trigger reflow
-                            void view.offsetWidth;
-                            view.classList.add('active');
-                            
-                            // Update footer text based on active view
-                            if (viewId === 'prayer') {
-                                document.getElementById('footer-text').textContent = 'Prayer times provided by AlAdhan API &copy; 2025';
-                            } else if (viewId === 'exam') {
-                                document.getElementById('footer-text').textContent = 'Exam Timetable &copy; 2025';
-                                // Force re-render exams when the exam tab is clicked
-                                console.log('Re-rendering exams on tab click');
-                                renderSubjects();
-                                updateAllDaysLeft();
-                                renderExamsInOrder();
-                            }
-                        }, 310);
-                    }
-                }
-            }
+                // Show exam view and hide prayer view with smooth transition
+                const prayerView = document.getElementById('prayer-view');
+                const examView = document.getElementById('exam-view');
+                
+                prayerView.style.opacity = '0';
+                setTimeout(() => {
+                    prayerView.classList.remove('active');
+                    examView.classList.add('active');
+                    setTimeout(() => {
+                        examView.style.opacity = '1';
+                        document.getElementById('footer-text').textContent = 'Exam Timetable &copy; 2025';
+                        
+                        // Force re-render exams when the exam tab is clicked
+                        console.log('Re-rendering exams on tab click');
+                        renderSubjects();
+                        updateAllDaysLeft();
+                        renderExamsInOrder();
+                    }, 50);
+                }, 300);
+            });
         });
         
         // =============== PRAYER TIMES FUNCTIONALITY ===============
-        
-        // Helper function to convert degrees to radians
-        function toRadians(degrees) {
-            return degrees * Math.PI / 180;
-        }
-        
-        // Helper function to convert radians to degrees
-        function toDegrees(radians) {
-            return radians * 180 / Math.PI;
-        }
-        
-        // Implementation of a prayer times calculator
-        function calculatePrayerTimes(date) {
-            // Prayer times for Cairo, Egypt
-            const latitude = 30.0444;
-            const longitude = 31.2357;
-            const timezone = 2; // Cairo is UTC+2
-            
-            // Date components
-            const year = date.getFullYear();
-            const month = date.getMonth() + 1;
-            const day = date.getDate();
-            
-            // Julian date calculation
-            let julianDate = day - 32075 + Math.floor(1461 * (year + 4800 + Math.floor((month - 14) / 12)) / 4) + 
-                            Math.floor(367 * (month - 2 - Math.floor((month - 14) / 12) * 12) / 12) - 
-                            Math.floor(3 * Math.floor((year + 4900 + Math.floor((month - 14) / 12)) / 100) / 4);
-            
-            // Calculate sun's position
-            const t = (julianDate - 2451545.0) / 36525;
-            
-            // Calculate approximate solar noon
-            const L0 = 280.46646 + 36000.76983 * t + 0.0003032 * t * t;
-            const M = 357.52911 + 35999.05029 * t - 0.0001537 * t * t;
-            const e = 0.016708634 - 0.000042037 * t - 0.0000001267 * t * t;
-            const C = (1.914602 - 0.004817 * t - 0.000014 * t * t) * Math.sin(toRadians(M)) +
-                     (0.019993 - 0.000101 * t) * Math.sin(toRadians(2 * M)) +
-                     0.000289 * Math.sin(toRadians(3 * M));
-            const trueL = (L0 + C) % 360;
-            const trueM = M + C;
-            
-            // Calculate time adjustments
-            const jd2000 = julianDate - 2451545.0;
-            const eqTime = 4 * toDegrees(
-                -0.0069 + 0.0053 * Math.sin(toRadians(trueM)) - 0.0068 * Math.sin(2 * toRadians(trueL))
-            );
-            
-            const declination = toDegrees(Math.asin(
-                Math.sin(toRadians(23.45)) * Math.sin(toRadians(trueL))
-            ));
-            
-            // Base parameters for Fajr and Isha
-            const fajrAngle = 19.5; // Egyptian General Authority of Survey
-            const ishaAngle = 17.5;
-            
-            // Helper function to get time for a specific angle
-            function getTimeForAngle(angle, isMorning) {
-                const term = Math.sin(toRadians(angle)) / 
-                       (Math.cos(toRadians(latitude)) * Math.cos(toRadians(declination))) -
-                       Math.tan(toRadians(latitude)) * Math.tan(toRadians(declination));
-                
-                // Ensure term is within valid range for acos
-                const acosInput = Math.max(-1, Math.min(1, term));
-                const t = toDegrees(Math.acos(acosInput)) / 15;
-                
-                return isMorning ? 12 - t - eqTime / 60 : 12 + t - eqTime / 60;
-            }
-            
-            // Calculate prayer times in local time
-            const fajrTime = getTimeForAngle(fajrAngle, true) + timezone - longitude / 15;
-            const sunriseTime = getTimeForAngle(0.833, true) + timezone - longitude / 15;
-            const dhuhrTime = 12 + timezone - longitude / 15 - eqTime / 60;
-            const asrTime = getTimeForAngle(Math.atan(1 / (1 + Math.tan(toRadians(latitude - declination)))), false) + timezone - longitude / 15;
-            const maghribTime = getTimeForAngle(0.833, false) + timezone - longitude / 15;
-            const ishaTime = getTimeForAngle(ishaAngle, false) + timezone - longitude / 15;
-            
-            // Helper to format times
-            function formatTime(time) {
-                const hours = Math.floor(time);
-                const minutes = Math.floor((time - hours) * 60);
-                return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-            }
-            
-            // Return calculated prayer times
-            return {
-                Fajr: formatTime(fajrTime),
-                Sunrise: formatTime(sunriseTime),
-                Dhuhr: formatTime(dhuhrTime),
-                Asr: formatTime(asrTime),
-                Maghrib: formatTime(maghribTime),
-                Isha: formatTime(ishaTime)
-            };
-        }
-        
-        // Simplified function to apply seasonal adjustments to calculated times
-        function applySeasonalAdjustments(times, date) {
-            const month = date.getMonth(); // 0-11
-            
-            // Seasonal adjustments (fine-tuning based on month)
-            const adjustments = {
-                // Winter adjustments (November to February)
-                winter: {
-                    Fajr: -5,      // 5 minutes earlier
-                    Sunrise: 0,
-                    Dhuhr: 0, 
-                    Asr: 0,
-                    Maghrib: 0,
-                    Isha: 10       // 10 minutes later
-                },
-                // Spring/Fall adjustments (March, April, September, October)
-                midSeason: {
-                    Fajr: -3,      // 3 minutes earlier
-                    Sunrise: 0,
-                    Dhuhr: 0,
-                    Asr: 5,        // 5 minutes later
-                    Maghrib: 0,
-                    Isha: 5        // 5 minutes later
-                },
-                // Summer adjustments (May to August)
-                summer: {
-                    Fajr: -10,     // 10 minutes earlier
-                    Sunrise: 0,
-                    Dhuhr: 0,
-                    Asr: 10,       // 10 minutes later
-                    Maghrib: 5,    // 5 minutes later
-                    Isha: 15       // 15 minutes later
-                }
-            };
-            
-            // Determine season
-            let currentAdjustments;
-            if (month >= 10 || month <= 1) {
-                currentAdjustments = adjustments.winter;
-            } else if ((month >= 2 && month <= 3) || (month >= 8 && month <= 9)) {
-                currentAdjustments = adjustments.midSeason;
-            } else {
-                currentAdjustments = adjustments.summer;
-            }
-            
-            // Apply adjustments
-            const adjustedTimes = {};
-            for (const [prayer, time] of Object.entries(times)) {
-                const [hours, minutes] = time.split(':').map(num => parseInt(num, 10));
-                const totalMinutes = hours * 60 + minutes + (currentAdjustments[prayer] || 0);
-                const adjustedHours = Math.floor(totalMinutes / 60);
-                const adjustedMinutes = totalMinutes % 60;
-                adjustedTimes[prayer] = `${adjustedHours.toString().padStart(2, '0')}:${adjustedMinutes.toString().padStart(2, '0')}`;
-            }
-            
-            return adjustedTimes;
-        }
         
         // Function to get prayer times
         async function getPrayerTimes() {
@@ -1385,66 +944,76 @@
                     return JSON.parse(cachedTimes);
                 }
 
-                console.log('Calculating prayer times locally...');
+                console.log('Fetching prayer times from API...', dateStr);
                 
-                // Calculate prayer times locally without API
-                const calculatedTimes = calculatePrayerTimes(today);
+                // Using a different API endpoint that should be more reliable
+                const apiUrl = `https://api.aladhan.com/v1/calendarByCity?city=Cairo&country=Egypt&method=5&month=${month}&year=${year}`;
+                console.log('API URL:', apiUrl);
                 
-                // Apply seasonal adjustments for more accuracy
-                const adjustedTimes = applySeasonalAdjustments(calculatedTimes, today);
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
                 
-                console.log('Prayer times calculated locally:', adjustedTimes);
+                if (!response.ok) {
+                    console.error(`API response error: ${response.status} ${response.statusText}`);
+                    throw new Error(`Network response was not ok: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Prayer times data received:', data ? 'valid data' : 'invalid data');
+                
+                if (!data || !data.data || !data.data[day - 1] || !data.data[day - 1].timings) {
+                    console.error('Invalid data format received:', data);
+                    throw new Error('Invalid data format received from API');
+                }
+                
+                const timings = data.data[day - 1].timings;
+                
+                // Clean up the timing values to remove the (EET) suffix
+                const cleanTimings = {};
+                for (const [prayer, time] of Object.entries(timings)) {
+                    cleanTimings[prayer] = time.split(' ')[0];
+                }
                 
                 // Cache the prayer times
-                localStorage.setItem(`prayerTimes_${dateStr}`, JSON.stringify(adjustedTimes));
+                localStorage.setItem(`prayerTimes_${dateStr}`, JSON.stringify(cleanTimings));
                 
-                return adjustedTimes;
+                return cleanTimings;
             } catch (error) {
-                console.error('Error calculating prayer times:', error);
+                console.error('Error fetching prayer times:', error);
+                
+                // If API fails, try to use yesterday's cached data if available
+                try {
+                    const yesterday = new Date();
+                    yesterday.setDate(yesterday.getDate() - 1);
+                    const prevYear = yesterday.getFullYear();
+                    const prevMonth = (yesterday.getMonth() + 1).toString().padStart(2, '0');
+                    const prevDay = yesterday.getDate().toString().padStart(2, '0');
+                    const prevDateStr = `${prevYear}-${prevMonth}-${prevDay}`;
+                    
+                    const cachedTimes = localStorage.getItem(`prayerTimes_${prevDateStr}`);
+                    if (cachedTimes) {
+                        console.log('Using previous day\'s cached prayer times as fallback');
+                        return JSON.parse(cachedTimes);
+                    }
+                } catch (fallbackError) {
+                    console.error('Error using cached fallback:', fallbackError);
+                }
                 
                 // Ultimate fallback
-                const today = new Date();
-                const currentMonth = today.getMonth(); // 0-11
-                
-                // Seasonal adjustments for prayer times
-                let fajrTime, sunriseTime, dhuhrTime, asrTime, maghribTime, ishaTime;
-                
-                // Winter (Nov-Feb)
-                if (currentMonth >= 10 || currentMonth <= 1) {
-                    fajrTime = '05:15';
-                    sunriseTime = '06:45';
-                    dhuhrTime = '12:00';
-                    asrTime = '15:00';
-                    maghribTime = '17:15';
-                    ishaTime = '18:45';
-                } 
-                // Spring/Fall (Mar-Apr, Sep-Oct)
-                else if (currentMonth >= 2 && currentMonth <= 3 || currentMonth >= 8 && currentMonth <= 9) {
-                    fajrTime = '04:30';
-                    sunriseTime = '06:00';
-                    dhuhrTime = '12:15';
-                    asrTime = '15:45';
-                    maghribTime = '18:30';
-                    ishaTime = '20:00';
-                }
-                // Summer (May-Aug)
-                else {
-                    fajrTime = '03:45';
-                    sunriseTime = '05:30';
-                    dhuhrTime = '12:20';
-                    asrTime = '16:15';
-                    maghribTime = '19:15';
-                    ishaTime = '20:45';
-                }
-                
-                console.log('Using seasonal fallback prayer times');
+                console.log('Using hardcoded fallback prayer times');
                 return {
-                    Fajr: fajrTime,
-                    Sunrise: sunriseTime,
-                    Dhuhr: dhuhrTime,
-                    Asr: asrTime,
-                    Maghrib: maghribTime,
-                    Isha: ishaTime
+                    Fajr: '05:30',
+                    Sunrise: '06:45', 
+                    Dhuhr: '12:15',
+                    Asr: '15:30',
+                    Maghrib: '18:00',
+                    Isha: '19:30'
                 };
             }
         }
@@ -1523,51 +1092,10 @@
         // Update countdown function to send notifications
         async function updateCountdown() {
             try {
-                let times;
-                try {
-                    times = await getPrayerTimes();
-                    if (!times) {
-                        throw new Error('Failed to get prayer times');
-                    }
-                } catch (fetchError) {
-                    console.error('Error fetching prayer times for countdown:', fetchError);
-                    // Use fallback times
-                    const now = new Date();
-                    const hour = now.getHours();
-                    
-                    // Morning fallback (midnight to noon)
-                    if (hour < 12) {
-                        times = {
-                            Fajr: '05:00',
-                            Sunrise: '06:30',
-                            Dhuhr: '12:00',
-                            Asr: '15:30',
-                            Maghrib: '18:00',
-                            Isha: '19:30'
-                        };
-                    } 
-                    // Afternoon fallback (noon to 6pm)
-                    else if (hour < 18) {
-                        times = {
-                            Fajr: '05:00',
-                            Sunrise: '06:30',
-                            Dhuhr: '12:00',
-                            Asr: '15:30',
-                            Maghrib: '18:00',
-                            Isha: '19:30'
-                        };
-                    } 
-                    // Evening fallback (6pm to midnight)
-                    else {
-                        times = {
-                            Fajr: '05:00',
-                            Sunrise: '06:30',
-                            Dhuhr: '12:00',
-                            Asr: '15:30',
-                            Maghrib: '18:00',
-                            Isha: '19:30'
-                        };
-                    }
+                const times = await getPrayerTimes();
+                if (!times) {
+                    document.getElementById('countdown').textContent = 'Error loading prayer times';
+                    return;
                 }
 
                 const countdownElement = document.getElementById('countdown');
@@ -1576,7 +1104,7 @@
                 const maghribTimeElement = document.getElementById('maghrib-time');
 
                 if (!countdownElement || !countdownTitleElement || !fajrTimeElement || !maghribTimeElement) {
-                    console.error('Required DOM elements not found for countdown');
+                    console.error('Required DOM elements not found');
                     return;
                 }
 
@@ -1625,7 +1153,7 @@
 
                 window.countdownInterval = setInterval(updateTimer, 1000);
             } catch (error) {
-                console.error('Error updating countdown:', error);
+                console.error('Error in updateCountdown:', error);
                 document.getElementById('countdown').textContent = 'Error updating countdown';
             }
         }
@@ -1633,119 +1161,60 @@
         // Display all prayer times
         async function displayAllPrayerTimes() {
             try {
-                console.log('Attempting to display all prayer times...');
-                // Make sure the container exists before proceeding
-                const container = document.getElementById('all-prayer-times');
-                if (!container) {
+                const today = new Date();
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const dateElement = document.getElementById('current-date');
+                if (dateElement) {
+                    // Add Hijri date in Arabic
+                    const hijriDate = convertToHijri(today);
+                    if (hijriDate) {
+                        dateElement.innerHTML = `${today.toLocaleDateString('en-US', options)} <span class="hijri-date">${hijriDate.day} ${hijriDate.monthName} ${hijriDate.year} هـ</span>`;
+                    } else {
+                        dateElement.textContent = today.toLocaleDateString('en-US', options);
+                    }
+                }
+                
+                const times = await getPrayerTimes();
+                console.log('Prayer times received for display:', times);
+                
+                if (!times) {
+                    console.error('Prayer times data is undefined');
+                    throw new Error('Prayer times data is undefined');
+                }
+                
+                const prayerTimesContainer = document.getElementById('all-prayer-times');
+                if (!prayerTimesContainer) {
                     console.error('Prayer times container not found');
                     return;
                 }
                 
-                // Get prayer times
-                let prayerTimesData;
-                try {
-                    prayerTimesData = await getPrayerTimes();
-                    if (!prayerTimesData) {
-                        throw new Error('No prayer times data received');
-                    }
-                } catch (fetchError) {
-                    console.error('Error fetching prayer times for display:', fetchError);
-                    // Create fallback times if API fetch fails
-                    const now = new Date();
-                    prayerTimesData = {
-                        Fajr: '05:00',
-                        Sunrise: '06:30',
-                        Dhuhr: '12:00',
-                        Asr: '15:30',
-                        Maghrib: '18:00',
-                        Isha: '19:30'
-                    };
+                const prayerNames = {
+                    'Fajr': 'Fajr',
+                    'Sunrise': 'Sunrise',
+                    'Dhuhr': 'Dhuhr',
+                    'Asr': 'Asr',
+                    'Maghrib': 'Maghrib',
+                    'Isha': 'Isha'
+                };
+                
+                let html = '';
+                for (const [key, name] of Object.entries(prayerNames)) {
+                    const displayTime = times[key] ? formatTo12Hour(times[key]) : '-- : --';
+                    html += `
+                        <div class="prayer-time-item ${key === 'Fajr' || key === 'Maghrib' ? 'highlighted' : ''}">
+                            <div class="prayer-name">${name}</div>
+                            <div class="prayer-time">${displayTime}</div>
+                        </div>
+                    `;
                 }
                 
-                console.log('Prayer times data for display:', prayerTimesData);
-                
-                // Clear existing prayer times
-                container.innerHTML = '';
-                
-                // Define the prayer order
-                const prayerOrder = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-                
-                // Get current time
-                const now = new Date();
-                const currentHour = now.getHours();
-                const currentMinute = now.getMinutes();
-                
-                // Determine current and next prayer
-                let currentPrayer = null;
-                let nextPrayer = null;
-                
-                for (let i = 0; i < prayerOrder.length; i++) {
-                    const prayer = prayerOrder[i];
-                    if (!prayerTimesData[prayer]) continue;
-                    
-                    const [prayerHour, prayerMinute] = prayerTimesData[prayer].split(':').map(num => parseInt(num, 10));
-                    
-                    if (
-                        currentHour < prayerHour || 
-                        (currentHour === prayerHour && currentMinute < prayerMinute)
-                    ) {
-                        if (nextPrayer === null) {
-                            nextPrayer = prayer;
-                        }
-                    } else {
-                        currentPrayer = prayer;
-                    }
-                }
-                
-                // If we've passed the last prayer of the day, set the next prayer to Fajr
-                if (nextPrayer === null) {
-                    nextPrayer = 'Fajr';
-                }
-                
-                // Display each prayer time with appropriate styling
-                prayerOrder.forEach(prayer => {
-                    if (!prayerTimesData[prayer]) return;
-                    
-                    const prayerElement = document.createElement('div');
-                    prayerElement.className = 'prayer-time-item';
-                    
-                    // Add special class for current or next prayer
-                    if (prayer === currentPrayer) {
-                        prayerElement.classList.add('current-prayer');
-                    } else if (prayer === nextPrayer) {
-                        prayerElement.classList.add('next-prayer');
-                    }
-                    
-                    const nameElement = document.createElement('div');
-                    nameElement.className = 'prayer-name';
-                    nameElement.textContent = prayer;
-                    
-                    const timeElement = document.createElement('div');
-                    timeElement.className = 'prayer-time';
-                    timeElement.textContent = formatTo12Hour(prayerTimesData[prayer]);
-                    
-                    prayerElement.appendChild(nameElement);
-                    prayerElement.appendChild(timeElement);
-                    container.appendChild(prayerElement);
-                });
-                
-                console.log('Successfully displayed all prayer times');
+                prayerTimesContainer.innerHTML = html;
+                console.log('Prayer times displayed successfully');
             } catch (error) {
                 console.error('Error displaying all prayer times:', error);
-                
-                // Display fallback message if everything fails
-                try {
-                    const container = document.getElementById('all-prayer-times');
-                    if (container) {
-                        container.innerHTML = `
-                            <div class="prayer-time-item error">
-                                <div class="prayer-name">Notice</div>
-                                <div class="prayer-time">Unable to load prayer times</div>
-                            </div>
-                        `;
-                    }
-                } catch (fallbackError) {
-                    console.error('Failed to display error message:', fallbackError);
+                const prayerTimesContainer = document.getElementById('all-prayer-times');
+                if (prayerTimesContainer) {
+                    prayerTimesContainer.innerHTML = 'Error loading prayer times. Please try again.';
                 }
             }
         }
@@ -2094,67 +1563,58 @@
             }
         });
         
-        // =============== UTILITY FUNCTIONS ===============
-        
-        // Function to convert Gregorian date to Hijri date
-        function convertToHijri(gregorianDate) {
-            try {
-                // Ensure we have a valid date
-                if (!(gregorianDate instanceof Date) || isNaN(gregorianDate)) {
-                    return null;
-                }
-                
-                // Julian day calculation
-                const year = gregorianDate.getFullYear();
-                const month = gregorianDate.getMonth() + 1; // JavaScript months are 0-based
-                const day = gregorianDate.getDate();
-                
-                let jd = Math.floor((365.25 * (year + 4716))) + Math.floor((30.6001 * (month + 1))) + day - 1524.5;
-                
-                // Adjustment for Julian to Gregorian calendar switch
-                if (jd > 2299160) {
-                    const a = Math.floor(year / 100);
-                    jd += 2 - a + Math.floor(a / 4);
-                }
-                
-                // Calculate Hijri date
-                jd = Math.floor(jd) + 0.5;
-                const hijriYear = Math.floor(((30 * (jd - 1948439.5)) + 10646) / 10631);
-                const hijriMonth = Math.min(12, Math.ceil((jd - (29 + Math.floor(10631 * hijriYear / 30) + 1948439.5)) / 29.5));
-                const hijriDay = Math.floor(jd - Math.floor(29.5 * (hijriMonth - 1) + (hijriYear * 354 + Math.floor((3 + 11 * hijriYear) / 30) + 1948439.5)) + 1);
-                
-                // Arabic month names
-                const hijriMonthNames = [
-                    "Muharram", "Safar", "Rabi al-Awwal", "Rabi al-Thani", 
-                    "Jumada al-Awwal", "Jumada al-Thani", "Rajab", "Sha'ban", 
-                    "Ramadan", "Shawwal", "Dhu al-Qi'dah", "Dhu al-Hijjah"
-                ];
-                
-                return {
-                    day: hijriDay,
-                    month: hijriMonth,
-                    monthName: hijriMonthNames[hijriMonth - 1],
-                    year: hijriYear
-                };
-            } catch (error) {
-                console.error('Error converting to Hijri date:', error);
-                return null;
-            }
+        // =============== INITIALIZATION ===============
+
+        // Add loading indicator for prayer times
+        function showLoadingIndicator() {
+            document.getElementById('countdown').textContent = 'Loading...';
         }
+
+        // Call showLoadingIndicator before fetching prayer times
+        showLoadingIndicator();
+        console.log('Initializing application...');
+
+        // Wrap initialization in an immediately invoked function to handle errors
+        (async function initializePrayerTimes() {
+            try {
+                console.log('Initializing prayer times...');
+                await displayAllPrayerTimes();
+                await updateCountdown();
+                console.log('Prayer times initialized successfully');
+            } catch (error) {
+                console.error('Error initializing prayer times:', error);
+                document.getElementById('countdown').textContent = 'Error loading prayer times';
+                document.getElementById('all-prayer-times').innerHTML = 'Error loading prayer times. Please try again.';
+            }
+        })();
+
+        // Initialize exam timetable
+        console.log('Initializing exam timetable...');
+        renderSubjects();
+        updateAllDaysLeft();
+
+        // Fix for the exam timetable rendering
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM fully loaded');
+            const prayerView = document.getElementById('prayer-view');
+            prayerView.style.opacity = '1';
+
+            // Ensure exam timetable is properly initialized
+            renderSubjects();
+
+            // Update exam timetable data every minute
+            setInterval(updateAllDaysLeft, 60000);
+        });
 
         // Main initialization function
         function initializeApp() {
             console.log('Initializing application...');
 
-            // Add loading indicator for prayer times
-            function showLoadingIndicator() {
-                document.getElementById('countdown').textContent = 'Loading...';
-            }
-
             showLoadingIndicator();
-            console.log('Initializing prayer times...');
+
             (async function initializePrayerTimes() {
                 try {
+                    console.log('Initializing prayer times...');
                     await displayAllPrayerTimes();
                     await updateCountdown();
                     console.log('Prayer times initialized successfully');
@@ -2169,29 +1629,8 @@
             try {
                 renderSubjects();
                 updateAllDaysLeft();
-
-                // Fix for the exam timetable rendering
-                document.addEventListener('DOMContentLoaded', function() {
-                    console.log('DOM fully loaded');
-                    const prayerView = document.getElementById('prayer-view');
-                    prayerView.style.opacity = '1';
-
-                    // Ensure exam timetable is properly initialized
-                    renderSubjects();
-
-                    // Update exam timetable data every minute
-                    setInterval(updateAllDaysLeft, 60000);
-                });
-
-                // Add Hijri date display
-                const dateElement = document.getElementById('current-date');
-                if (dateElement) {
-                    const today = new Date();
-                    const hijriDate = convertToHijri(today);
-                    if (hijriDate) {
-                        dateElement.innerHTML = `${today.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} <span class="hijri-date">${hijriDate.day} ${hijriDate.monthName} ${hijriDate.year} AH</span>`;
-                    }
-                }
+                renderExamsInOrder();
+                console.log('Exam timetable initialized successfully');
             } catch (error) {
                 console.error('Error initializing exam timetable:', error);
             }
@@ -2208,124 +1647,31 @@
             console.log('DOM already loaded - initializing app immediately');
             initializeApp();
         }
-    </script>
-    <!-- Particles.js Library -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script>
-        // Initialize particles.js
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.particlesJS) {
-                particlesJS("particles-js", {
-                    "particles": {
-                        "number": {
-                            "value": 30,
-                            "density": {
-                                "enable": true,
-                                "value_area": 800
-                            }
-                        },
-                        "color": {
-                            "value": "#3498db"
-                        },
-                        "shape": {
-                            "type": "circle",
-                            "stroke": {
-                                "width": 0,
-                                "color": "#000000"
-                            },
-                            "polygon": {
-                                "nb_sides": 5
-                            }
-                        },
-                        "opacity": {
-                            "value": 0.1,
-                            "random": true,
-                            "anim": {
-                                "enable": true,
-                                "speed": 1,
-                                "opacity_min": 0.05,
-                                "sync": false
-                            }
-                        },
-                        "size": {
-                            "value": 5,
-                            "random": true,
-                            "anim": {
-                                "enable": true,
-                                "speed": 2,
-                                "size_min": 1,
-                                "sync": false
-                            }
-                        },
-                        "line_linked": {
-                            "enable": true,
-                            "distance": 150,
-                            "color": "#3498db",
-                            "opacity": 0.1,
-                            "width": 1
-                        },
-                        "move": {
-                            "enable": true,
-                            "speed": 1,
-                            "direction": "none",
-                            "random": true,
-                            "straight": false,
-                            "out_mode": "out",
-                            "bounce": false,
-                            "attract": {
-                                "enable": false,
-                                "rotateX": 600,
-                                "rotateY": 1200
-                            }
-                        }
-                    },
-                    "interactivity": {
-                        "detect_on": "canvas",
-                        "events": {
-                            "onhover": {
-                                "enable": true,
-                                "mode": "grab"
-                            },
-                            "onclick": {
-                                "enable": true,
-                                "mode": "push"
-                            },
-                            "resize": true
-                        },
-                        "modes": {
-                            "grab": {
-                                "distance": 140,
-                                "line_linked": {
-                                    "opacity": 0.3
-                                }
-                            },
-                            "push": {
-                                "particles_nb": 3
-                            }
-                        }
-                    },
-                    "retina_detect": true
-                });
-            }
-        });
+        
+        // Function to convert Gregorian date to Hijri date with Arabic month names
+        function convertToHijri(gregorianDate) {
+            try {
+                const hijriDate = new HijriDate(gregorianDate);
+                const arabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
 
-        // Handle theme colors in particles
-        function updateParticlesColors() {
-            if (window.pJSDom && window.pJSDom.length > 0) {
-                const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
-                window.pJSDom[0].pJS.particles.color.value = accentColor;
-                window.pJSDom[0].pJS.particles.line_linked.color = accentColor;
-                window.pJSDom[0].pJS.fn.particlesRefresh();
+                // Convert day and year to Arabic numerals
+                const dayInArabic = hijriDate.getDate().toString().split('').map(num => arabicNumerals[parseInt(num, 10)]).join('');
+                const yearInArabic = hijriDate.getFullYear().toString().split('').map(num => arabicNumerals[parseInt(num, 10)]).join('');
+
+                // Hijri month names in Arabic
+                const hijriMonths = ["محرم", "صفر", "ربيع الأول", "ربيع الآخر", "جمادى الأولى", "جمادى الآخرة", "رجب", "شعبان", "رمضان", "شوال", "ذو القعدة", "ذو الحجة"];
+
+                return {
+                    day: dayInArabic,
+                    month: hijriDate.getMonth() + 1, // HijriDate months are 0-indexed
+                    monthName: hijriMonths[hijriDate.getMonth()],
+                    year: yearInArabic
+                };
+            } catch (error) {
+                console.error('Error converting to Hijri date:', error);
+                return null;
             }
         }
-
-        // Update particles when theme changes
-        document.getElementById('theme-dropdown').addEventListener('change', function() {
-            setTimeout(updateParticlesColors, 100);
-        });
-        document.getElementById('toggle-dark-mode').addEventListener('click', function() {
-            setTimeout(updateParticlesColors, 100);
-        });
     </script>
 </body>
 </html>
