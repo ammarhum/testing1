@@ -973,6 +973,7 @@
                 }
                 
                 const timings = data.data[day - 1].timings;
+                const hijriDate = data.data[day - 1].date.hijri;
                 
                 // Clean up the timing values to remove the (EET) suffix
                 const cleanTimings = {};
@@ -980,10 +981,11 @@
                     cleanTimings[prayer] = time.split(' ')[0];
                 }
                 
-                // Cache the prayer times
+                // Cache the prayer times and hijri date
                 localStorage.setItem(`prayerTimes_${dateStr}`, JSON.stringify(cleanTimings));
+                localStorage.setItem(`hijriDate_${dateStr}`, JSON.stringify(hijriDate));
                 
-                return cleanTimings;
+                return { timings: cleanTimings, hijriDate };
             } catch (error) {
                 console.error('Error fetching prayer times:', error);
                 
@@ -997,9 +999,10 @@
                     const prevDateStr = `${prevYear}-${prevMonth}-${prevDay}`;
                     
                     const cachedTimes = localStorage.getItem(`prayerTimes_${prevDateStr}`);
-                    if (cachedTimes) {
-                        console.log('Using previous day\'s cached prayer times as fallback');
-                        return JSON.parse(cachedTimes);
+                    const cachedHijriDate = localStorage.getItem(`hijriDate_${prevDateStr}`);
+                    if (cachedTimes && cachedHijriDate) {
+                        console.log('Using previous day\'s cached prayer times and hijri date as fallback');
+                        return { timings: JSON.parse(cachedTimes), hijriDate: JSON.parse(cachedHijriDate) };
                     }
                 } catch (fallbackError) {
                     console.error('Error using cached fallback:', fallbackError);
@@ -1008,12 +1011,20 @@
                 // Ultimate fallback
                 console.log('Using hardcoded fallback prayer times');
                 return {
-                    Fajr: '05:30',
-                    Sunrise: '06:45', 
-                    Dhuhr: '12:15',
-                    Asr: '15:30',
-                    Maghrib: '18:00',
-                    Isha: '19:30'
+                    timings: {
+                        Fajr: '05:30',
+                        Sunrise: '06:45',
+                        Dhuhr: '12:15',
+                        Asr: '15:30',
+                        Maghrib: '18:00',
+                        Isha: '19:30'
+                    },
+                    hijriDate: {
+                        day: '10',
+                        month: '9',
+                        year: '1446',
+                        monthName: 'رمضان'
+                    }
                 };
             }
         }
@@ -1092,8 +1103,8 @@
         // Update countdown function to send notifications
         async function updateCountdown() {
             try {
-                const times = await getPrayerTimes();
-                if (!times) {
+                const { timings, hijriDate } = await getPrayerTimes();
+                if (!timings) {
                     document.getElementById('countdown').textContent = 'Error loading prayer times';
                     return;
                 }
@@ -1108,11 +1119,11 @@
                     return;
                 }
 
-                const fajrTime = parseTime(times.Fajr);
-                const maghribTime = parseTime(times.Maghrib);
+                const fajrTime = parseTime(timings.Fajr);
+                const maghribTime = parseTime(timings.Maghrib);
 
-                fajrTimeElement.textContent = formatTo12Hour(times.Fajr);
-                maghribTimeElement.textContent = formatTo12Hour(times.Maghrib);
+                fajrTimeElement.textContent = formatTo12Hour(timings.Fajr);
+                maghribTimeElement.textContent = formatTo12Hour(timings.Maghrib);
 
                 if (window.countdownInterval) {
                     clearInterval(window.countdownInterval);
@@ -1165,51 +1176,47 @@
                 const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
                 const dateElement = document.getElementById('current-date');
                 if (dateElement) {
-                    // Add Hijri date in Arabic
-                    const hijriDate = convertToHijri(today);
-                    if (hijriDate) {
-                        dateElement.innerHTML = `${today.toLocaleDateString('en-US', options)} <span class="hijri-date">${hijriDate.day} ${hijriDate.monthName} ${hijriDate.year} هـ</span>`;
-                    } else {
-                        dateElement.textContent = today.toLocaleDateString('en-US', options);
+                    const { timings, hijriDate } = await getPrayerTimes();
+                    console.log('Prayer times and Hijri date received for display:', timings, hijriDate);
+
+                    if (!timings || !hijriDate) {
+                        console.error('Prayer times or Hijri date data is undefined');
+                        throw new Error('Prayer times or Hijri date data is undefined');
                     }
+
+                    // Add Hijri date in Arabic
+                    const hijriDateString = `${hijriDate.day} ${hijriDate.monthName} ${hijriDate.year} هـ`;
+                    dateElement.innerHTML = `${today.toLocaleDateString('en-US', options)} <span class="hijri-date">${hijriDateString}</span>`;
+
+                    const prayerTimesContainer = document.getElementById('all-prayer-times');
+                    if (!prayerTimesContainer) {
+                        console.error('Prayer times container not found');
+                        return;
+                    }
+
+                    const prayerNames = {
+                        'Fajr': 'Fajr',
+                        'Sunrise': 'Sunrise',
+                        'Dhuhr': 'Dhuhr',
+                        'Asr': 'Asr',
+                        'Maghrib': 'Maghrib',
+                        'Isha': 'Isha'
+                    };
+
+                    let html = '';
+                    for (const [key, name] of Object.entries(prayerNames)) {
+                        const displayTime = timings[key] ? formatTo12Hour(timings[key]) : '-- : --';
+                        html += `
+                            <div class="prayer-time-item ${key === 'Fajr' || key === 'Maghrib' ? 'highlighted' : ''}">
+                                <div class="prayer-name">${name}</div>
+                                <div class="prayer-time">${displayTime}</div>
+                            </div>
+                        `;
+                    }
+
+                    prayerTimesContainer.innerHTML = html;
+                    console.log('Prayer times displayed successfully');
                 }
-                
-                const times = await getPrayerTimes();
-                console.log('Prayer times received for display:', times);
-                
-                if (!times) {
-                    console.error('Prayer times data is undefined');
-                    throw new Error('Prayer times data is undefined');
-                }
-                
-                const prayerTimesContainer = document.getElementById('all-prayer-times');
-                if (!prayerTimesContainer) {
-                    console.error('Prayer times container not found');
-                    return;
-                }
-                
-                const prayerNames = {
-                    'Fajr': 'Fajr',
-                    'Sunrise': 'Sunrise',
-                    'Dhuhr': 'Dhuhr',
-                    'Asr': 'Asr',
-                    'Maghrib': 'Maghrib',
-                    'Isha': 'Isha'
-                };
-                
-                let html = '';
-                for (const [key, name] of Object.entries(prayerNames)) {
-                    const displayTime = times[key] ? formatTo12Hour(times[key]) : '-- : --';
-                    html += `
-                        <div class="prayer-time-item ${key === 'Fajr' || key === 'Maghrib' ? 'highlighted' : ''}">
-                            <div class="prayer-name">${name}</div>
-                            <div class="prayer-time">${displayTime}</div>
-                        </div>
-                    `;
-                }
-                
-                prayerTimesContainer.innerHTML = html;
-                console.log('Prayer times displayed successfully');
             } catch (error) {
                 console.error('Error displaying all prayer times:', error);
                 const prayerTimesContainer = document.getElementById('all-prayer-times');
